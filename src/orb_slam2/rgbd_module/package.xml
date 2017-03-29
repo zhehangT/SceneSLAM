@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package>
+  <name>rgbd_module</name>
+  <version>0.0.0</version>
+  <description>The rgbd_module package</description>
+
+  <!-- One maintainer tag required, multiple allowed, one person per tag -->
+  <!-- Example:  -->
+  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
+  <maintainer email="tzh@todo.todo">tzh</maintainer>
+
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>TODO</license>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>hi_slam</build_depend>
+  <build_depend>pluginlib</build_depend>
+
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>hi_slam</run_depend>
+  <run_depend>pluginlib</run_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+    <hi_slam plugin="${prefix}/rgbd_module.xml" />
+  </export>
+</package>

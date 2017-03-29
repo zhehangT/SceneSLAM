@@ -1,0 +1,16 @@
+/build
+/devel
+/build_isolated
+/devel_isolated
+
+
+cmake-build-debug/
+.idea/
+
+*.workspace
+*.user
+*.bag
+.catkin_workspace
+ORBvoc.txt
+.catkin_tools
+libORB_SLAM2.so
