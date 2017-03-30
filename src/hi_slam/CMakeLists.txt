@@ -74,6 +74,9 @@ ${LIBS})
 add_dependencies(main ${PROJECT_NAME}_gencfg)
 
 
-
-
+add_executable(test_main
+src/test_main.cpp
+)
+target_link_libraries(test_main
+${LIBS})
 

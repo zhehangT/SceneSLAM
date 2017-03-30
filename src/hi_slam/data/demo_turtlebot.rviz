@@ -4,6 +4,8 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /TF1
+        - /TF1/Frames1
         - /Submaps1
         - /PointCloud21
         - /Marker1
@@ -27,7 +29,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: PointCloud2
 Visualization Manager:
   Class: ""
   Displays:
@@ -53,14 +55,154 @@ Visualization Manager:
       Enabled: true
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
+        World:
+          Value: false
+        base_footprint:
+          Value: true
+        base_link:
+          Value: false
+        camera_depth_frame:
+          Value: false
+        camera_depth_optical_frame:
+          Value: false
+        camera_link:
+          Value: false
+        camera_rgb_frame:
+          Value: false
+        camera_rgb_optical_frame:
+          Value: false
+        caster_back_link:
+          Value: false
+        caster_front_link:
+          Value: false
+        cliff_sensor_front_link:
+          Value: false
+        cliff_sensor_left_link:
+          Value: false
+        cliff_sensor_right_link:
+          Value: false
+        gyro_link:
+          Value: false
+        map:
+          Value: true
+        odom:
+          Value: true
+        plate_bottom_link:
+          Value: false
+        plate_middle_link:
+          Value: false
+        plate_top_link:
+          Value: false
+        pole_bottom_0_link:
+          Value: false
+        pole_bottom_1_link:
+          Value: false
+        pole_bottom_2_link:
+          Value: false
+        pole_bottom_3_link:
+          Value: false
+        pole_bottom_4_link:
+          Value: false
+        pole_bottom_5_link:
+          Value: false
+        pole_kinect_0_link:
+          Value: false
+        pole_kinect_1_link:
+          Value: false
+        pole_middle_0_link:
+          Value: false
+        pole_middle_1_link:
+          Value: false
+        pole_middle_2_link:
+          Value: false
+        pole_middle_3_link:
+          Value: false
+        pole_top_0_link:
+          Value: false
+        pole_top_1_link:
+          Value: false
+        pole_top_2_link:
+          Value: false
+        pole_top_3_link:
+          Value: false
+        wheel_left_link:
+          Value: false
+        wheel_right_link:
+          Value: false
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        {}
+        World:
+          map:
+            odom:
+              base_footprint:
+                base_link:
+                  camera_rgb_frame:
+                    camera_depth_frame:
+                      camera_depth_optical_frame:
+                        {}
+                    camera_link:
+                      {}
+                    camera_rgb_optical_frame:
+                      {}
+                  caster_back_link:
+                    {}
+                  caster_front_link:
+                    {}
+                  cliff_sensor_front_link:
+                    {}
+                  cliff_sensor_left_link:
+                    {}
+                  cliff_sensor_right_link:
+                    {}
+                  gyro_link:
+                    {}
+                  plate_bottom_link:
+                    {}
+                  plate_middle_link:
+                    {}
+                  plate_top_link:
+                    {}
+                  pole_bottom_0_link:
+                    {}
+                  pole_bottom_1_link:
+                    {}
+                  pole_bottom_2_link:
+                    {}
+                  pole_bottom_3_link:
+                    {}
+                  pole_bottom_4_link:
+                    {}
+                  pole_bottom_5_link:
+                    {}
+                  pole_kinect_0_link:
+                    {}
+                  pole_kinect_1_link:
+                    {}
+                  pole_middle_0_link:
+                    {}
+                  pole_middle_1_link:
+                    {}
+                  pole_middle_2_link:
+                    {}
+                  pole_middle_3_link:
+                    {}
+                  pole_top_0_link:
+                    {}
+                  pole_top_1_link:
+                    {}
+                  pole_top_2_link:
+                    {}
+                  pole_top_3_link:
+                    {}
+                  wheel_left_link:
+                    {}
+                  wheel_right_link:
+                    {}
       Update Interval: 0
       Value: true
     - Class: Submaps
@@ -107,7 +249,10 @@ Visualization Manager:
       Marker Topic: /ORB_SLAM/Map
       Name: Marker
       Namespaces:
-        {}
+        Camera: true
+        Graph: true
+        KeyFrames: true
+        MapPoints: true
       Queue Size: 100
       Value: true
   Enabled: true
@@ -142,7 +287,7 @@ Visualization Manager:
         Value: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 10
+      Scale: 34.2247009
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
       X: 0

@@ -155,10 +155,10 @@ void MapPublisher::PublishMapPoints(const vector<ORB_SLAM2::MapPoint*> &vpMPs, c
             continue;
         geometry_msgs::Point p;
         cv::Mat pos = vpMPs[i]->GetWorldPos();
-        p.x=pos.at<float>(0);
+        p.x=pos.at<float>(2);
 //        p.y=pos.at<float>(1);
 //        p.z=pos.at<float>(2);
-        p.y=pos.at<float>(2);
+        p.y=-pos.at<float>(0);
         p.z=pos.at<float>(1);
 
         mPoints.points.push_back(p);
@@ -170,10 +170,10 @@ void MapPublisher::PublishMapPoints(const vector<ORB_SLAM2::MapPoint*> &vpMPs, c
             continue;
         geometry_msgs::Point p;
         cv::Mat pos = (*sit)->GetWorldPos();
-        p.x=pos.at<float>(0);
+        p.x=pos.at<float>(2);
 //        p.y=pos.at<float>(1);
 //        p.z=pos.at<float>(2);
-        p.y=pos.at<float>(2);
+        p.y=-pos.at<float>(0);
         p.z=pos.at<float>(1);
 
         mReferencePoints.points.push_back(p);
@@ -211,35 +211,35 @@ void MapPublisher::PublishKeyFrames(const vector<ORB_SLAM2::KeyFrame*> &vpKFs)
         cv::Mat p4w = Twc*p4;
 
         geometry_msgs::Point msgs_o,msgs_p1, msgs_p2, msgs_p3, msgs_p4;
-        msgs_o.x=ow.at<float>(0);
+        msgs_o.x=ow.at<float>(2);
 //        msgs_o.y=ow.at<float>(1);
 //        msgs_o.z=ow.at<float>(2);
-        msgs_o.y=ow.at<float>(2);
+        msgs_o.y=-ow.at<float>(0);
         msgs_o.z=ow.at<float>(1);
 
-        msgs_p1.x=p1w.at<float>(0);
+        msgs_p1.x=p1w.at<float>(2);
 //        msgs_p1.y=p1w.at<float>(1);
 //        msgs_p1.z=p1w.at<float>(2);
-        msgs_p1.y=p1w.at<float>(2);
+        msgs_p1.y=-p1w.at<float>(0);
         msgs_p1.z=p1w.at<float>(1);
 
 
-        msgs_p2.x=p2w.at<float>(0);
+        msgs_p2.x=p2w.at<float>(2);
 //        msgs_p2.y=p2w.at<float>(1);
 //        msgs_p2.z=p2w.at<float>(2);
-        msgs_p2.y=p2w.at<float>(2);
+        msgs_p2.y=-p2w.at<float>(0);
         msgs_p2.z=p2w.at<float>(1);
 
-        msgs_p3.x=p3w.at<float>(0);
+        msgs_p3.x=p3w.at<float>(2);
 //        msgs_p3.y=p3w.at<float>(1);
 //        msgs_p3.z=p3w.at<float>(2);
-        msgs_p3.y=p3w.at<float>(2);
+        msgs_p3.y=-p3w.at<float>(0);
         msgs_p3.z=p3w.at<float>(1);
 
-        msgs_p4.x=p4w.at<float>(0);
+        msgs_p4.x=p4w.at<float>(2);
 //        msgs_p4.y=p4w.at<float>(1);
 //        msgs_p4.z=p4w.at<float>(2);
-        msgs_p4.y=p4w.at<float>(2);
+        msgs_p4.y=-p4w.at<float>(0);
         msgs_p4.z=p4w.at<float>(1);
 
         mKeyFrames.points.push_back(msgs_o);
@@ -269,10 +269,10 @@ void MapPublisher::PublishKeyFrames(const vector<ORB_SLAM2::KeyFrame*> &vpKFs)
                     continue;
                 cv::Mat Ow2 = (*vit)->GetCameraCenter();
                 geometry_msgs::Point msgs_o2;
-                msgs_o2.x=Ow2.at<float>(0);
+                msgs_o2.x=Ow2.at<float>(2);
 //                msgs_o2.y=Ow2.at<float>(1);
 //                msgs_o2.z=Ow2.at<float>(2);
-                msgs_o2.y=Ow2.at<float>(2);
+                msgs_o2.y=-Ow2.at<float>(0);
                 msgs_o2.z=Ow2.at<float>(1);
                 mCovisibilityGraph.points.push_back(msgs_o);
                 mCovisibilityGraph.points.push_back(msgs_o2);
@@ -285,10 +285,10 @@ void MapPublisher::PublishKeyFrames(const vector<ORB_SLAM2::KeyFrame*> &vpKFs)
         {
             cv::Mat Owp = pParent->GetCameraCenter();
             geometry_msgs::Point msgs_op;
-            msgs_op.x=Owp.at<float>(0);
+            msgs_op.x=Owp.at<float>(2);
 //            msgs_op.y=Owp.at<float>(1);
 //            msgs_op.z=Owp.at<float>(2);
-            msgs_op.y=Owp.at<float>(2);
+            msgs_op.y=-Owp.at<float>(0);
             msgs_op.z=Owp.at<float>(1);
             mMST.points.push_back(msgs_o);
             mMST.points.push_back(msgs_op);
@@ -300,10 +300,10 @@ void MapPublisher::PublishKeyFrames(const vector<ORB_SLAM2::KeyFrame*> &vpKFs)
                 continue;
             cv::Mat Owl = (*sit)->GetCameraCenter();
             geometry_msgs::Point msgs_ol;
-            msgs_ol.x=Owl.at<float>(0);
+            msgs_ol.x=Owl.at<float>(2);
 //            msgs_ol.y=Owl.at<float>(1);
 //            msgs_ol.z=Owl.at<float>(2);
-            msgs_ol.y=Owl.at<float>(2);
+            msgs_ol.y=-Owl.at<float>(0);
             msgs_ol.z=Owl.at<float>(1);
             mMST.points.push_back(msgs_o);
             mMST.points.push_back(msgs_ol);
@@ -340,34 +340,34 @@ void MapPublisher::PublishCurrentCamera(const cv::Mat &Tcw)
     cv::Mat p4w = Twc*p4;
 
     geometry_msgs::Point msgs_o,msgs_p1, msgs_p2, msgs_p3, msgs_p4;
-    msgs_o.x=ow.at<float>(0);
+    msgs_o.x=ow.at<float>(2);
 //    msgs_o.y=ow.at<float>(1);
 //    msgs_o.z=ow.at<float>(2);
-    msgs_o.y=ow.at<float>(2);
+    msgs_o.y=-ow.at<float>(0);
     msgs_o.z=ow.at<float>(1);
 
-    msgs_p1.x=p1w.at<float>(0);
+    msgs_p1.x=p1w.at<float>(2);
 //    msgs_p1.y=p1w.at<float>(1);
 //    msgs_p1.z=p1w.at<float>(2);
-    msgs_p1.y=p1w.at<float>(2);
+    msgs_p1.y=-p1w.at<float>(0);
     msgs_p1.z=p1w.at<float>(1);
 
-    msgs_p2.x=p2w.at<float>(0);
+    msgs_p2.x=p2w.at<float>(2);
 //    msgs_p2.y=p2w.at<float>(1);
 //    msgs_p2.z=p2w.at<float>(2);
-    msgs_p2.y=p2w.at<float>(2);
+    msgs_p2.y=-p2w.at<float>(0);
     msgs_p2.z=p2w.at<float>(1);
 
-    msgs_p3.x=p3w.at<float>(0);
+    msgs_p3.x=p3w.at<float>(2);
 //    msgs_p3.y=p3w.at<float>(1);
 //    msgs_p3.z=p3w.at<float>(2);
-    msgs_p3.y=p3w.at<float>(2);
+    msgs_p3.y=-p3w.at<float>(0);
     msgs_p3.z=p3w.at<float>(1);
 
-    msgs_p4.x=p4w.at<float>(0);
+    msgs_p4.x=p4w.at<float>(2);
 //    msgs_p4.y=p4w.at<float>(1);
 //    msgs_p4.z=p4w.at<float>(2);
-    msgs_p4.y=p4w.at<float>(2);
+    msgs_p4.y=-p4w.at<float>(0);
     msgs_p4.z=p4w.at<float>(1);
 
     mCurrentCamera.points.push_back(msgs_o);
