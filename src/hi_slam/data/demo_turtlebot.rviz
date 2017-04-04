@@ -4,6 +4,7 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Global Options1
         - /TF1
         - /TF1/Frames1
         - /Submaps1
@@ -56,14 +57,12 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        World:
-          Value: false
         base_footprint:
-          Value: true
+          Value: false
         base_link:
           Value: false
         camera_depth_frame:
-          Value: false
+          Value: true
         camera_depth_optical_frame:
           Value: false
         camera_link:
@@ -84,10 +83,12 @@ Visualization Manager:
           Value: false
         gyro_link:
           Value: false
+        laser_map:
+          Value: true
         map:
           Value: true
         odom:
-          Value: true
+          Value: false
         plate_bottom_link:
           Value: false
         plate_middle_link:
@@ -136,8 +137,8 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        World:
-          map:
+        map:
+          laser_map:
             odom:
               base_footprint:
                 base_link:
@@ -249,10 +250,7 @@ Visualization Manager:
       Marker Topic: /ORB_SLAM/Map
       Name: Marker
       Namespaces:
-        Camera: true
-        Graph: true
-        KeyFrames: true
-        MapPoints: true
+        {}
       Queue Size: 100
       Value: true
   Enabled: true
@@ -287,7 +285,7 @@ Visualization Manager:
         Value: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 34.2247009
+      Scale: 103.918152
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
       X: 0

@@ -49,6 +49,7 @@ constexpr char kSubmapQueryServiceName[] = "submap_query";
 class Node {
  public:
   Node(const NodeOptions& options, tf2_ros::Buffer* tf_buffer);
+  Node(const NodeOptions& options, tf2_ros::Buffer* tf_buffer, geometry_msgs::Transform& pose);
   ~Node();
 
   Node(const Node&) = delete;
@@ -58,6 +59,9 @@ class Node {
 
   ::ros::NodeHandle* node_handle();
   MapBuilderBridge* map_builder_bridge();
+
+  geometry_msgs::TransformStamped map_laser_transform;
+  geometry_msgs::Transform current_pose;
 
  private:
   bool HandleSubmapQuery(

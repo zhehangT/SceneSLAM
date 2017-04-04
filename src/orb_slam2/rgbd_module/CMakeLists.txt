@@ -30,6 +30,8 @@ find_package(catkin REQUIRED COMPONENTS
     std_msgs
     cv_bridge
     tf
+    tf2
+    tf2_ros
     hi_slam
     pluginlib
     )

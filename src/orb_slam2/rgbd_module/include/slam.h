@@ -18,7 +18,7 @@
 #include "image_grabber.h"
 #include "slam_base.h"
 #include "System.h"
-
+#include "map_publisher.h"
 
 namespace rgbd_module{
 
@@ -32,10 +32,15 @@ public:
 
   void Shutdown();
 
+  void Activate(geometry_msgs::Transform& pose);
+
+  void Shutdown(geometry_msgs::Transform& pose);
+
   ~Slam();
 
 private:
   ORB_SLAM2::System* SLAM_;
+  MapPublisher* mpMapPub_;
   ros::NodeHandle nh_;
 
   ImageGrabber* igb_;

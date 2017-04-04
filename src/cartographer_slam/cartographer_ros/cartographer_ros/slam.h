@@ -30,9 +30,15 @@ public:
 
   Slam();
 
+  ~Slam();
+
   void Activate();
 
+  void Activate(geometry_msgs::Transform& pose);
+
   void Shutdown();
+
+  void Shutdown(geometry_msgs::Transform& pose);
 
 private:
 
@@ -41,7 +47,7 @@ private:
 
   tf2_ros::Buffer tf_buffer;
   tf2_ros::TransformListener tf;
-  Node node;
+  Node* node;
 
   NodeOptions options;
 

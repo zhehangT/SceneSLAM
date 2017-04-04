@@ -50,6 +50,15 @@ constexpr int kLatestOnlyPublisherQueueSize = 1;
 Node::Node(const NodeOptions& options, tf2_ros::Buffer* const tf_buffer)
     : options_(options), map_builder_bridge_(options_, tf_buffer) {}
 
+Node::Node(const NodeOptions& options, tf2_ros::Buffer* const tf_buffer, geometry_msgs::Transform& pose)
+    : options_(options), map_builder_bridge_(options_, tf_buffer) {
+
+  map_laser_transform.transform = pose;
+  map_laser_transform.header.frame_id = "map";
+  map_laser_transform.child_frame_id = options_.map_frame;
+
+}
+
 Node::~Node() {
   {
     carto::common::MutexLocker lock(&mutex_);
@@ -107,6 +116,11 @@ void Node::PublishSubmapList(const ::ros::WallTimerEvent& unused_timer_event) {
 
 void Node::PublishTrajectoryStates(const ::ros::WallTimerEvent& timer_event) {
   carto::common::MutexLocker lock(&mutex_);
+
+  map_laser_transform.header.stamp = ros::Time::now();
+  tf_broadcaster_.sendTransform(map_laser_transform);
+
+
   for (const auto& entry : map_builder_bridge_.GetTrajectoryStates()) {
     const auto& trajectory_state = entry.second;
 
@@ -153,12 +167,19 @@ void Node::PublishTrajectoryStates(const ::ros::WallTimerEvent& timer_event) {
         stamped_transforms.push_back(stamped_transform);
 
         tf_broadcaster_.sendTransform(stamped_transforms);
+
+        current_pose = ToGeometryMsgTransform(tracking_to_map);
+
       } else {
         stamped_transform.header.frame_id = options_.map_frame;
         stamped_transform.child_frame_id = options_.published_frame;
         stamped_transform.transform = ToGeometryMsgTransform(
             tracking_to_map * (*trajectory_state.published_to_tracking));
         tf_broadcaster_.sendTransform(stamped_transform);
+
+        current_pose = ToGeometryMsgTransform(tracking_to_map);
+
+
       }
     }
   }

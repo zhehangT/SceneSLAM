@@ -27,162 +27,162 @@ namespace ORB_SLAM2
 
 Map::Map():mnMaxKFid(0),mnBigChangeIdx(0),mbMapUpdated(false),mbCameraUpdated(false)
 {
-//    mCameraPose =
+  //    mCameraPose =
 }
 
 void Map::AddKeyFrame(KeyFrame *pKF)
 {
-    unique_lock<mutex> lock(mMutexMap);
-    mspKeyFrames.insert(pKF);
-    if(pKF->mnId>mnMaxKFid)
-        mnMaxKFid=pKF->mnId;
-    mbMapUpdated=true;
+  unique_lock<mutex> lock(mMutexMap);
+  mspKeyFrames.insert(pKF);
+  if(pKF->mnId>mnMaxKFid)
+    mnMaxKFid=pKF->mnId;
+  mbMapUpdated=true;
 
 }
 
 void Map::AddMapPoint(MapPoint *pMP)
 {
-    unique_lock<mutex> lock(mMutexMap);
-    mspMapPoints.insert(pMP);
-    mbMapUpdated=true;
+  unique_lock<mutex> lock(mMutexMap);
+  mspMapPoints.insert(pMP);
+  mbMapUpdated=true;
 
 }
 
 void Map::EraseMapPoint(MapPoint *pMP)
 {
-    unique_lock<mutex> lock(mMutexMap);
-    mspMapPoints.erase(pMP);
-    mbMapUpdated=true;
+  unique_lock<mutex> lock(mMutexMap);
+  mspMapPoints.erase(pMP);
+  mbMapUpdated=true;
 
-    // TODO: This only erase the pointer.
-    // Delete the MapPoint
+  // TODO: This only erase the pointer.
+  // Delete the MapPoint
 }
 
 void Map::EraseKeyFrame(KeyFrame *pKF)
 {
-    unique_lock<mutex> lock(mMutexMap);
-    mspKeyFrames.erase(pKF);
-    mbMapUpdated=true;
+  unique_lock<mutex> lock(mMutexMap);
+  mspKeyFrames.erase(pKF);
+  mbMapUpdated=true;
 
-    // TODO: This only erase the pointer.
-    // Delete the MapPoint
+  // TODO: This only erase the pointer.
+  // Delete the MapPoint
 }
 
 void Map::SetReferenceMapPoints(const vector<MapPoint *> &vpMPs)
 {
-    unique_lock<mutex> lock(mMutexMap);
-    mvpReferenceMapPoints = vpMPs;
-    mbMapUpdated=true;
+  unique_lock<mutex> lock(mMutexMap);
+  mvpReferenceMapPoints = vpMPs;
+  mbMapUpdated=true;
 
 }
 
 void Map::InformNewBigChange()
 {
-    unique_lock<mutex> lock(mMutexMap);
-    mnBigChangeIdx++;
+  unique_lock<mutex> lock(mMutexMap);
+  mnBigChangeIdx++;
 }
 
 int Map::GetLastBigChangeIdx()
 {
-    unique_lock<mutex> lock(mMutexMap);
-    return mnBigChangeIdx;
+  unique_lock<mutex> lock(mMutexMap);
+  return mnBigChangeIdx;
 }
 
 vector<KeyFrame*> Map::GetAllKeyFrames()
 {
-    unique_lock<mutex> lock(mMutexMap);
-    return vector<KeyFrame*>(mspKeyFrames.begin(),mspKeyFrames.end());
+  unique_lock<mutex> lock(mMutexMap);
+  return vector<KeyFrame*>(mspKeyFrames.begin(),mspKeyFrames.end());
 }
 
 vector<MapPoint*> Map::GetAllMapPoints()
 {
-    unique_lock<mutex> lock(mMutexMap);
-    return vector<MapPoint*>(mspMapPoints.begin(),mspMapPoints.end());
+  unique_lock<mutex> lock(mMutexMap);
+  return vector<MapPoint*>(mspMapPoints.begin(),mspMapPoints.end());
 }
 
 long unsigned int Map::MapPointsInMap()
 {
-    unique_lock<mutex> lock(mMutexMap);
-    return mspMapPoints.size();
+  unique_lock<mutex> lock(mMutexMap);
+  return mspMapPoints.size();
 }
 
 long unsigned int Map::KeyFramesInMap()
 {
-    unique_lock<mutex> lock(mMutexMap);
-    return mspKeyFrames.size();
+  unique_lock<mutex> lock(mMutexMap);
+  return mspKeyFrames.size();
 }
 
 vector<MapPoint*> Map::GetReferenceMapPoints()
 {
-    unique_lock<mutex> lock(mMutexMap);
-    return mvpReferenceMapPoints;
+  unique_lock<mutex> lock(mMutexMap);
+  return mvpReferenceMapPoints;
 }
 
 long unsigned int Map::GetMaxKFid()
 {
-    unique_lock<mutex> lock(mMutexMap);
-    return mnMaxKFid;
+  unique_lock<mutex> lock(mMutexMap);
+  return mnMaxKFid;
 }
 
 void Map::clear()
 {
-    for(set<MapPoint*>::iterator sit=mspMapPoints.begin(), send=mspMapPoints.end(); sit!=send; sit++)
-        delete *sit;
+  for(set<MapPoint*>::iterator sit=mspMapPoints.begin(), send=mspMapPoints.end(); sit!=send; sit++)
+    delete *sit;
 
-    for(set<KeyFrame*>::iterator sit=mspKeyFrames.begin(), send=mspKeyFrames.end(); sit!=send; sit++)
-        delete *sit;
+  for(set<KeyFrame*>::iterator sit=mspKeyFrames.begin(), send=mspKeyFrames.end(); sit!=send; sit++)
+    delete *sit;
 
-    mspMapPoints.clear();
-    mspKeyFrames.clear();
-    mnMaxKFid = 0;
-    mvpReferenceMapPoints.clear();
-    mvpKeyFrameOrigins.clear();
+  mspMapPoints.clear();
+  mspKeyFrames.clear();
+  mnMaxKFid = 0;
+  mvpReferenceMapPoints.clear();
+  mvpKeyFrameOrigins.clear();
 }
 
-    bool Map::isMapUpdated()
-    {
-        unique_lock<mutex> lock(mMutexMap);
-        return mbMapUpdated;
-    }
+bool Map::isMapUpdated()
+{
+  unique_lock<mutex> lock(mMutexMap);
+  return mbMapUpdated;
+}
 
-    void Map::SetFlagAfterBA()
-    {
-        unique_lock<mutex> lock(mMutexMap);
-        mbMapUpdated=true;
+void Map::SetFlagAfterBA()
+{
+  unique_lock<mutex> lock(mMutexMap);
+  mbMapUpdated=true;
 
-    }
+}
 
-    void Map::ResetUpdated()
-    {
-        unique_lock<mutex> lock(mMutexMap);
-        mbMapUpdated=false;
-    }
+void Map::ResetUpdated()
+{
+  unique_lock<mutex> lock(mMutexMap);
+  mbMapUpdated=false;
+}
 
-    cv::Mat Map::getCameraPose() {
+cv::Mat Map::getCameraPose() {
 
-        unique_lock<mutex> lock(mMutexMap);
-        return mCameraPose;
+  unique_lock<mutex> lock(mMutexMap);
+  return mCameraPose;
 
-    }
+}
 
-    void Map::setCameraPose(const cv::Mat &Tcw) {
+void Map::setCameraPose(const cv::Mat &Tcw) {
 
-        unique_lock<mutex> lock(mMutexMap);
-        mCameraPose = Tcw.clone();
-        mbCameraUpdated = true;
-    }
+  unique_lock<mutex> lock(mMutexMap);
+  mCameraPose = Tcw.clone();
+  mbCameraUpdated = true;
+}
 
-    bool Map::isCamUpdated()
-    {
-        unique_lock<mutex> lock(mMutexMap);
-        return mbCameraUpdated;
-    }
+bool Map::isCamUpdated()
+{
+  unique_lock<mutex> lock(mMutexMap);
+  return mbCameraUpdated;
+}
 
-    void Map::ResetCamFlag()
-    {
-        unique_lock<mutex> lock(mMutexMap);
-        mbCameraUpdated = false;
-    }
+void Map::ResetCamFlag()
+{
+  unique_lock<mutex> lock(mMutexMap);
+  mbCameraUpdated = false;
+}
 
 
 

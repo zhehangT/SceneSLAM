@@ -17,18 +17,14 @@
 class ImageGrabber
 {
 public:
-  ImageGrabber(ORB_SLAM2::System* pSLAM):mpSLAM(pSLAM){
-
-    mpMapPub = new MapPublisher(pSLAM->mpMap);
-
-  }
+  ImageGrabber(ORB_SLAM2::System* pSLAM, MapPublisher* pMapPub)
+     :mpSLAM(pSLAM),
+      mpMapPub(pMapPub){}
 
   ~ImageGrabber(){
 
     delete mpMapPub;
-//    if(mpSLAM != nullptr){
-//      delete mpSLAM;
-//    }
+
   }
 
   void GrabRGBD(const sensor_msgs::ImageConstPtr& msgRGB,const sensor_msgs::ImageConstPtr& msgD);

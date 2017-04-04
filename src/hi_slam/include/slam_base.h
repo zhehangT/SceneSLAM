@@ -8,7 +8,7 @@
 
 #ifndef SLAM_BASE_H
 #define SLAM_BASE_H
-
+#include<geometry_msgs/Transform.h>
 
 namespace hi_slam {
 
@@ -25,6 +25,10 @@ namespace hi_slam {
         virtual void Activate() = 0;
 
         virtual void Shutdown() = 0;
+
+        virtual void Activate(geometry_msgs::Transform& pose) {}
+        virtual void Shutdown(geometry_msgs::Transform& pose) {}
+
 
     };
 

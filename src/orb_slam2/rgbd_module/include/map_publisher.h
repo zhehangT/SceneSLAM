@@ -24,9 +24,14 @@
 
 #include<visualization_msgs/Marker.h>
 #include<mutex>
-#include<tf/transform_broadcaster.h>
+#include <tf/transform_broadcaster.h>
+#include <tf/transform_listener.h>
+#include <tf2_ros/transform_broadcaster.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <geometry_msgs/TransformStamped.h>
+#include <geometry_msgs/Transform.h>
+#include<ros/ros.h>
 
-#include"ros/ros.h"
 #include"Map.h"
 #include"MapPoint.h"
 #include"KeyFrame.h"
@@ -34,7 +39,7 @@
 
 class MapPublisher {
 public:
-    MapPublisher(ORB_SLAM2::Map *pMap);
+    MapPublisher(ORB_SLAM2::Map *pMap, geometry_msgs::Transform& pose);
 
     ORB_SLAM2::Map *mpMap;
 
@@ -47,6 +52,8 @@ public:
     void PublishCurrentCamera(const cv::Mat &Tcw);
 
     void SetCurrentCameraPose(const cv::Mat &Tcw);
+
+    geometry_msgs::Transform GetCameraPose(){return rgbd_camera_transform;}
 
 private:
 
@@ -76,8 +83,13 @@ private:
     std::mutex mMutexCamera;
 
     tf::TransformBroadcaster br;
+    tf::TransformListener listener;
     tf::Transform transform;
 
+    tf2_ros::StaticTransformBroadcaster tf2_br;
+    geometry_msgs::TransformStamped map_rgbd_transform;
+
+    geometry_msgs::Transform rgbd_camera_transform;
 
 };
 

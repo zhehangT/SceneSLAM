@@ -8,7 +8,9 @@
 
 
 #include "software_bus.h"
-
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Vector3.h>
+#include <tf2/LinearMath/Matrix3x3.h>
 
 namespace hi_slam{
 
@@ -21,6 +23,15 @@ namespace hi_slam{
     //start with "rgdb_module" will die, do not know why
     slam_module_ = slam_loader_.createInstance("laser_module/Slam");
     StartSoftwareBus();
+
+    pose.translation.x = 0;
+    pose.translation.y = 0;
+    pose.translation.z = 0;
+    pose.rotation.x = 0;
+    pose.rotation.y = 0;
+    pose.rotation.z = 0;
+    pose.rotation.w = 1;
+
   }
 
   SoftwareBus::~SoftwareBus(){
@@ -65,7 +76,7 @@ namespace hi_slam{
 
       case RESET:
         ROS_INFO("Running hi_slam state machine in RESET");
-        slam_module_->Shutdown();
+        shutdown_slam();
         state_ = START;
         break;
 
@@ -109,7 +120,7 @@ namespace hi_slam{
 
     try{
       slam_module_ = slam_loader_.createInstance(name);
-      slam_module_->Activate();
+      slam_module_->Activate(pose);
       ROS_INFO("Start slam module %s", name.c_str());
     }catch(const pluginlib::PluginlibException &ex){
       ROS_FATAL(
@@ -119,6 +130,34 @@ namespace hi_slam{
     }
   }
 
+  void SoftwareBus::shutdown_slam(){
+
+    geometry_msgs::Transform pose_temp;
+    slam_module_->Shutdown(pose_temp);
+
+//    tf2::Quaternion q1(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w);
+//    tf2::Quaternion q2(pose_temp.rotation.x, pose_temp.rotation.y, pose_temp.rotation.z, pose_temp.rotation.w);
+    tf2::Matrix3x3 r1(tf2::Quaternion(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w));
+    tf2::Matrix3x3 r2(tf2::Quaternion(pose_temp.rotation.x, pose_temp.rotation.y, pose_temp.rotation.z, pose_temp.rotation.w));
+
+
+    tf2::Vector3 t1(pose.translation.x, pose.translation.y, pose.translation.z);
+    tf2::Vector3 t2(pose_temp.translation.x, pose_temp.translation.y, pose_temp.translation.z);
+    t1 = r1 * t2 + t1;
+    r1 = r1 * r2;
+    tf2::Quaternion q;
+    r1.getRotation(q);
+
+    pose.translation.x = t1.getX();
+    pose.translation.y = t1.getY();
+    pose.translation.z = t1.getZ();
+    pose.rotation.x = q.getX();
+    pose.rotation.y = q.getY();
+    pose.rotation.z = q.getZ();
+    pose.rotation.w = q.getW();
+
+
+  }
 
   void SoftwareBus::reconfigureCB(hi_slam::SoftwareBusConfig &config, uint32_t level){
 

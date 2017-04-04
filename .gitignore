@@ -2,6 +2,7 @@
 /devel
 /build_isolated
 /devel_isolated
+build/
 
 
 cmake-build-debug/

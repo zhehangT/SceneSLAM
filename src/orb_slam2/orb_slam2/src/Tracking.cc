@@ -209,6 +209,8 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB,const cv::Mat &imD, const d
     mImGray = imRGB;
     cv::Mat imDepth = imD;
 
+
+    //cvtColor 色彩空间转换
     if(mImGray.channels()==3)
     {
         if(mbRGB)
@@ -509,6 +511,8 @@ void Tracking::Track()
 
 void Tracking::StereoInitialization()
 {
+
+    //地图点超过500个进行初始化
     if(mCurrentFrame.N>500)
     {
         // Set Frame pose to the origin

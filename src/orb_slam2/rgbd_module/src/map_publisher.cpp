@@ -20,11 +20,10 @@
 
 #include "map_publisher.h"
 
-
-MapPublisher::MapPublisher(ORB_SLAM2::Map* pMap):mpMap(pMap), mbCameraUpdated(false)
+MapPublisher::MapPublisher(ORB_SLAM2::Map* pMap, geometry_msgs::Transform& pose):mpMap(pMap), mbCameraUpdated(false)
 {
 //    const char* MAP_FRAME_ID = "/ORB_SLAM/World";
-    const char* MAP_FRAME_ID = "map";
+    const char* MAP_FRAME_ID = "rgbd_map";
     const char* POINTS_NAMESPACE = "MapPoints";
     const char* KEYFRAMES_NAMESPACE = "KeyFrames";
     const char* GRAPH_NAMESPACE = "Graph";
@@ -111,35 +110,38 @@ MapPublisher::MapPublisher(ORB_SLAM2::Map* pMap):mpMap(pMap), mbCameraUpdated(fa
     publisher.publish(mKeyFrames);
     publisher.publish(mCurrentCamera);
 
-
-    transform.setOrigin( tf::Vector3(0.0, 0.0, 2.0) );
-    transform.setRotation( tf::Quaternion(0, 0, 0, 1) );
-
+    map_rgbd_transform.transform = pose;
+    map_rgbd_transform.header.frame_id = "map";
+    map_rgbd_transform.child_frame_id = "rgbd_map";
 
 }
 
 void MapPublisher::Refresh()
 {
 
-    if(isCamUpdated())
-    {
-       cv::Mat Tcw = GetCurrentCameraPose();
-       PublishCurrentCamera(Tcw);
-       ResetCamFlag();
-    }
+  map_rgbd_transform.header.stamp = ros::Time::now();
+  tf2_br.sendTransform(map_rgbd_transform);
 
-    if(mpMap->isMapUpdated())
-    {
-        vector<ORB_SLAM2::KeyFrame*> vKeyFrames = mpMap->GetAllKeyFrames();
-        vector<ORB_SLAM2::MapPoint*> vMapPoints = mpMap->GetAllMapPoints();
-        vector<ORB_SLAM2::MapPoint*> vRefMapPoints = mpMap->GetReferenceMapPoints();
 
-        PublishMapPoints(vMapPoints, vRefMapPoints);   
-        PublishKeyFrames(vKeyFrames);
+  if(isCamUpdated())
+  {
+    cv::Mat Tcw = GetCurrentCameraPose();
+    PublishCurrentCamera(Tcw);
+    ResetCamFlag();
+    SetCurrentCameraPose(Tcw);
+  }
 
-        mpMap->ResetUpdated();
-    }
-    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/World", "map"));
+  if(mpMap->isMapUpdated())
+  {
+    vector<ORB_SLAM2::KeyFrame*> vKeyFrames = mpMap->GetAllKeyFrames();
+    vector<ORB_SLAM2::MapPoint*> vMapPoints = mpMap->GetAllMapPoints();
+    vector<ORB_SLAM2::MapPoint*> vRefMapPoints = mpMap->GetReferenceMapPoints();
+
+    PublishMapPoints(vMapPoints, vRefMapPoints);
+    PublishKeyFrames(vKeyFrames);
+
+    mpMap->ResetUpdated();
+  }
 }
 
 void MapPublisher::PublishMapPoints(const vector<ORB_SLAM2::MapPoint*> &vpMPs, const vector<ORB_SLAM2::MapPoint*> &vpRefMPs)
@@ -390,6 +392,67 @@ void MapPublisher::PublishCurrentCamera(const cv::Mat &Tcw)
     mCurrentCamera.header.stamp = ros::Time::now();
 
     publisher.publish(mCurrentCamera);
+
+
+    {
+    /*根据世界坐标系下相机的位姿和里程计坐标系下相机的位姿，计算相机坐标系和里程计坐标系之间的旋转矩阵和平移向量
+     *
+     * r_world_camera = r_world_odom * r_odom_camera
+     * --> r_world_odom = r_world_camera * r_odom_camera^(-1);
+     *
+     * C_w = r_world_odom * C_o + t_world_odom
+     * C_w = r_world_camera * [0,0,0] + t_world_camera  = t_world_camera
+     * C_o = r_odom_camera * [0,0,0] + t_odom_camera  = t_odom_camera
+     * --> t_world_odom = t_world_camera - r_world_odom * t_odom_camera;
+     */
+      tf::Matrix3x3 r_world_camera = tf::Matrix3x3(Twc.at<float>(2,2), -Twc.at<float>(2,0), Twc.at<float>(2,1),
+                                                   -Twc.at<float>(0,2), Twc.at<float>(0,0), -Twc.at<float>(0,1),
+                                                   Twc.at<float>(1,2), -Twc.at<float>(1,0), Twc.at<float>(1,1));
+      tf::Vector3 t_world_camera(ow.at<float>(2), -ow.at<float>(0), ow.at<float>(1));
+
+
+      rgbd_camera_transform.translation.x = t_world_camera.getX();
+      rgbd_camera_transform.translation.y = t_world_camera.getY();
+      rgbd_camera_transform.translation.z = t_world_camera.getZ();
+      tf::Quaternion q;
+      r_world_camera.getRotation(q);
+      rgbd_camera_transform.rotation.x = q.getX();
+      rgbd_camera_transform.rotation.y = q.getY();
+      rgbd_camera_transform.rotation.z = q.getZ();
+      rgbd_camera_transform.rotation.w = q.getW();
+
+
+
+      tf::StampedTransform transform_odom_camera;
+      try{
+
+        listener.lookupTransform("odom", "camera_rgb_frame",
+                                 ros::Time(0), transform_odom_camera);
+
+
+        tf::Matrix3x3 r_odom_camera = transform_odom_camera.getBasis();
+        tf::Vector3 t_odom_camera =  transform_odom_camera.getOrigin();
+
+
+        tf::Matrix3x3 r_world_odom = r_world_camera * r_odom_camera.inverse();
+        transform.setBasis( r_world_odom );
+
+        tf::Vector3 t_world_odom = t_world_camera - r_world_odom * t_odom_camera;
+        transform.setOrigin( t_world_odom);
+
+
+        br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "rgbd_map", "odom"));
+
+      }
+      catch (tf::TransformException &ex) {
+
+        //      ROS_ERROR("FUCK:%s",ex.what());
+      }
+
+
+    }
+
+
 }
 
 void MapPublisher::SetCurrentCameraPose(const cv::Mat &Tcw)
