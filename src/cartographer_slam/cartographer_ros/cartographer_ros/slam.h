@@ -34,7 +34,7 @@ public:
 
   void Activate();
 
-  void Activate(geometry_msgs::Transform& pose);
+  void Activate(geometry_msgs::Transform& pose, string map_frame);
 
   void Shutdown();
 
@@ -48,8 +48,7 @@ private:
   tf2_ros::Buffer tf_buffer;
   tf2_ros::TransformListener tf;
   Node* node;
-
-  NodeOptions options;
+  NodeOptions options_;
 
   int trajectory_id;
   std::unordered_set<string> expected_sensor_ids;

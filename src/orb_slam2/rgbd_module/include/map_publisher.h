@@ -39,7 +39,7 @@
 
 class MapPublisher {
 public:
-    MapPublisher(ORB_SLAM2::Map *pMap, geometry_msgs::Transform& pose);
+    MapPublisher(ORB_SLAM2::Map *pMap, geometry_msgs::Transform& pose, string map_frame);
 
     ORB_SLAM2::Map *mpMap;
 
@@ -90,6 +90,7 @@ private:
     geometry_msgs::TransformStamped map_rgbd_transform;
 
     geometry_msgs::Transform rgbd_camera_transform;
+    string MAP_FRAME_ID;
 
 };
 

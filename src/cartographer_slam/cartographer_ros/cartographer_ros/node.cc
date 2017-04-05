@@ -50,8 +50,16 @@ constexpr int kLatestOnlyPublisherQueueSize = 1;
 Node::Node(const NodeOptions& options, tf2_ros::Buffer* const tf_buffer)
     : options_(options), map_builder_bridge_(options_, tf_buffer) {}
 
-Node::Node(const NodeOptions& options, tf2_ros::Buffer* const tf_buffer, geometry_msgs::Transform& pose)
+Node::Node(const NodeOptions& options, tf2_ros::Buffer* const tf_buffer, geometry_msgs::Transform& pose, string map_frame)
     : options_(options), map_builder_bridge_(options_, tf_buffer) {
+
+  laser_camera_transform.translation.x = 0;
+  laser_camera_transform.translation.y = 0;
+  laser_camera_transform.translation.z = 0;
+  laser_camera_transform.rotation.x = 0;
+  laser_camera_transform.rotation.y = 0;
+  laser_camera_transform.rotation.z = 0;
+  laser_camera_transform.rotation.w = 1;
 
   map_laser_transform.transform = pose;
   map_laser_transform.header.frame_id = "map";
@@ -168,7 +176,7 @@ void Node::PublishTrajectoryStates(const ::ros::WallTimerEvent& timer_event) {
 
         tf_broadcaster_.sendTransform(stamped_transforms);
 
-        current_pose = ToGeometryMsgTransform(tracking_to_map);
+        laser_camera_transform = ToGeometryMsgTransform(tracking_to_map);
 
       } else {
         stamped_transform.header.frame_id = options_.map_frame;
@@ -177,7 +185,7 @@ void Node::PublishTrajectoryStates(const ::ros::WallTimerEvent& timer_event) {
             tracking_to_map * (*trajectory_state.published_to_tracking));
         tf_broadcaster_.sendTransform(stamped_transform);
 
-        current_pose = ToGeometryMsgTransform(tracking_to_map);
+        laser_camera_transform = ToGeometryMsgTransform(tracking_to_map);
 
 
       }

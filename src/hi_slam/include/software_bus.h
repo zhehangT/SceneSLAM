@@ -75,8 +75,12 @@ namespace hi_slam {
     void start_slam_base_scene(int scene);
     void start_slam_base_name(std::string name);
     void shutdown_slam();
+//    void publish_transform();
 
     geometry_msgs::Transform pose;
+    geometry_msgs::Transform last_pose;
+
+    int map_id;
 
   };
 

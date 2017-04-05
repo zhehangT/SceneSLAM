@@ -8,9 +8,12 @@
 
 
 #include "software_bus.h"
+#include <tf2_ros/static_transform_broadcaster.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Vector3.h>
 #include <tf2/LinearMath/Matrix3x3.h>
+#include <stdlib.h>
+
 
 namespace hi_slam{
 
@@ -21,7 +24,7 @@ namespace hi_slam{
      cfg_first_setup_(true){
 
     //start with "rgdb_module" will die, do not know why
-    slam_module_ = slam_loader_.createInstance("laser_module/Slam");
+    slam_module_ = slam_loader_.createInstance("laser_module");
     StartSoftwareBus();
 
     pose.translation.x = 0;
@@ -31,6 +34,16 @@ namespace hi_slam{
     pose.rotation.y = 0;
     pose.rotation.z = 0;
     pose.rotation.w = 1;
+
+    last_pose.translation.x = 0;
+    last_pose.translation.y = 0;
+    last_pose.translation.z = 0;
+    last_pose.rotation.x = 0;
+    last_pose.rotation.y = 0;
+    last_pose.rotation.z = 0;
+    last_pose.rotation.w = 1;
+
+    map_id = 0;
 
   }
 
@@ -72,6 +85,7 @@ namespace hi_slam{
         state_ = RUNNING;
         break;
       case RUNNING:
+//        publish_transform();
         break;
 
       case RESET:
@@ -99,13 +113,13 @@ namespace hi_slam{
 
     case 0:
 
-      start_slam_base_name("rgbd_module/Slam");
+      start_slam_base_name("rgbd_module");
 
       break;
 
     case 1:
 
-      start_slam_base_name("laser_module/Slam");
+      start_slam_base_name("laser_module");
       break;
 
     case 2:
@@ -120,7 +134,9 @@ namespace hi_slam{
 
     try{
       slam_module_ = slam_loader_.createInstance(name);
-      slam_module_->Activate(pose);
+      std::string map_frame = name + "_" + std::to_string(map_id++);
+      std::cout<< map_frame <<std::endl;
+      slam_module_->Activate(pose, map_frame);
       ROS_INFO("Start slam module %s", name.c_str());
     }catch(const pluginlib::PluginlibException &ex){
       ROS_FATAL(
@@ -148,6 +164,7 @@ namespace hi_slam{
     tf2::Quaternion q;
     r1.getRotation(q);
 
+//    last_pose = pose;
     pose.translation.x = t1.getX();
     pose.translation.y = t1.getY();
     pose.translation.z = t1.getZ();
@@ -157,7 +174,23 @@ namespace hi_slam{
     pose.rotation.w = q.getW();
 
 
+
   }
+
+//  void SoftwareBus::publish_transform(){
+
+//    tf2_ros::StaticTransformBroadcaster tf2_br;
+//    geometry_msgs::TransformStamped map_rgbd_transform;
+
+//    map_rgbd_transform.transform = last_pose;
+//    map_rgbd_transform.header.frame_id = "map";
+//    map_rgbd_transform.child_frame_id = "laser_module_0";
+//    map_rgbd_transform.header.stamp = ros::Time::now();
+//    tf2_br.sendTransform(map_rgbd_transform);
+
+//  }
+
+
 
   void SoftwareBus::reconfigureCB(hi_slam::SoftwareBusConfig &config, uint32_t level){
 

@@ -30,7 +30,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: PointCloud2
+    SyncSource: ""
 Visualization Manager:
   Class: ""
   Displays:
@@ -83,8 +83,6 @@ Visualization Manager:
           Value: false
         gyro_link:
           Value: false
-        laser_map:
-          Value: true
         map:
           Value: true
         odom:
@@ -127,6 +125,8 @@ Visualization Manager:
           Value: false
         pole_top_3_link:
           Value: false
+        rgbd_map:
+          Value: true
         wheel_left_link:
           Value: false
         wheel_right_link:
@@ -138,7 +138,7 @@ Visualization Manager:
       Show Names: true
       Tree:
         map:
-          laser_map:
+          rgbd_map:
             odom:
               base_footprint:
                 base_link:
@@ -250,7 +250,10 @@ Visualization Manager:
       Marker Topic: /ORB_SLAM/Map
       Name: Marker
       Namespaces:
-        {}
+        Camera: true
+        Graph: true
+        KeyFrames: true
+        MapPoints: true
       Queue Size: 100
       Value: true
   Enabled: true
@@ -288,8 +291,8 @@ Visualization Manager:
       Scale: 103.918152
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: 0
-      Y: 0
+      X: 0.423410237
+      Y: -2.51159358
     Saved: ~
 Window Geometry:
   Displays:

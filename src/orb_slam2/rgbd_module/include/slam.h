@@ -32,7 +32,7 @@ public:
 
   void Shutdown();
 
-  void Activate(geometry_msgs::Transform& pose);
+  void Activate(geometry_msgs::Transform& pose, string map_frame);
 
   void Shutdown(geometry_msgs::Transform& pose);
 

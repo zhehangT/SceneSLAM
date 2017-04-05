@@ -53,9 +53,9 @@ void Slam::Activate() {
 
 }
 
-void Slam::Activate(geometry_msgs::Transform& pose){
+void Slam::Activate(geometry_msgs::Transform& pose, string map_frame){
 
-  mpMapPub_ = new MapPublisher(SLAM_->mpMap, pose);
+  mpMapPub_ = new MapPublisher(SLAM_->mpMap, pose, map_frame);
   igb_ = new ImageGrabber(SLAM_, mpMapPub_);
 
 

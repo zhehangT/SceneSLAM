@@ -49,7 +49,7 @@ constexpr char kSubmapQueryServiceName[] = "submap_query";
 class Node {
  public:
   Node(const NodeOptions& options, tf2_ros::Buffer* tf_buffer);
-  Node(const NodeOptions& options, tf2_ros::Buffer* tf_buffer, geometry_msgs::Transform& pose);
+  Node(const NodeOptions& options, tf2_ros::Buffer* tf_buffer, geometry_msgs::Transform& pose, string map_frame);
   ~Node();
 
   Node(const Node&) = delete;
@@ -61,7 +61,7 @@ class Node {
   MapBuilderBridge* map_builder_bridge();
 
   geometry_msgs::TransformStamped map_laser_transform;
-  geometry_msgs::Transform current_pose;
+  geometry_msgs::Transform laser_camera_transform;
 
  private:
   bool HandleSubmapQuery(
@@ -73,6 +73,7 @@ class Node {
   void SpinOccupancyGridThreadForever();
 
   const NodeOptions options_;
+
 
   tf2_ros::TransformBroadcaster tf_broadcaster_;
 

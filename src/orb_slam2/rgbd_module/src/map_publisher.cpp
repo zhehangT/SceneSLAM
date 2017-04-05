@@ -20,10 +20,11 @@
 
 #include "map_publisher.h"
 
-MapPublisher::MapPublisher(ORB_SLAM2::Map* pMap, geometry_msgs::Transform& pose):mpMap(pMap), mbCameraUpdated(false)
+MapPublisher::MapPublisher(ORB_SLAM2::Map* pMap, geometry_msgs::Transform& pose, string map_frame):mpMap(pMap), mbCameraUpdated(false)
 {
 //    const char* MAP_FRAME_ID = "/ORB_SLAM/World";
-    const char* MAP_FRAME_ID = "rgbd_map";
+//    const char* MAP_FRAME_ID = "rgbd_map";
+    MAP_FRAME_ID = map_frame;
     const char* POINTS_NAMESPACE = "MapPoints";
     const char* KEYFRAMES_NAMESPACE = "KeyFrames";
     const char* GRAPH_NAMESPACE = "Graph";
@@ -110,9 +111,17 @@ MapPublisher::MapPublisher(ORB_SLAM2::Map* pMap, geometry_msgs::Transform& pose)
     publisher.publish(mKeyFrames);
     publisher.publish(mCurrentCamera);
 
+    rgbd_camera_transform.translation.x = 0;
+    rgbd_camera_transform.translation.y = 0;
+    rgbd_camera_transform.translation.z = 0;
+    rgbd_camera_transform.rotation.x = 0;
+    rgbd_camera_transform.rotation.y = 0;
+    rgbd_camera_transform.rotation.z = 0;
+    rgbd_camera_transform.rotation.w = 1;
+
     map_rgbd_transform.transform = pose;
     map_rgbd_transform.header.frame_id = "map";
-    map_rgbd_transform.child_frame_id = "rgbd_map";
+    map_rgbd_transform.child_frame_id = MAP_FRAME_ID;
 
 }
 
@@ -441,7 +450,7 @@ void MapPublisher::PublishCurrentCamera(const cv::Mat &Tcw)
         transform.setOrigin( t_world_odom);
 
 
-        br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "rgbd_map", "odom"));
+        br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), MAP_FRAME_ID, "odom"));
 
       }
       catch (tf::TransformException &ex) {

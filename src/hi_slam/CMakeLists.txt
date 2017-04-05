@@ -30,6 +30,8 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   tf
+  tf2
+  tf2_ros
   pluginlib
   dynamic_reconfigure
 )

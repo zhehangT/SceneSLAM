@@ -38,9 +38,11 @@ void Slam::Activate(){
 }
 
 
-void Slam::Activate(geometry_msgs::Transform& pose){
+void Slam::Activate(geometry_msgs::Transform& pose, string map_frame){
 
-  node = new Node(loadOptions(), &tf_buffer, pose);
+  options_ = loadOptions();
+  options_.map_frame = map_frame;
+  node = new Node(options_, &tf_buffer, pose, map_frame);
 
   ROS_INFO_STREAM("laser_module activate with pose...");
 
@@ -57,8 +59,9 @@ void Slam::Shutdown(geometry_msgs::Transform& pose) {
 
   node->map_builder_bridge()->FinishTrajectory(trajectory_id);
   google::ShutdownGoogleLogging();
-  pose = node->current_pose;
+  pose = node->laser_camera_transform;
   delete node;
+
 }
 
 
@@ -88,14 +91,13 @@ void Slam::run(){
 
   constexpr int kInfiniteSubscriberQueueSize = 0;
 
-  options = loadOptions();
 
   node->Initialize();
 
   trajectory_id = -1;
 
   // For 2D SLAM, subscribe to exactly one horizontal laser.
-  if (options.use_laser_scan) {
+  if (options_.use_laser_scan) {
     laser_scan_subscriber = node->node_handle()->subscribe(
         kLaserScanTopic, kInfiniteSubscriberQueueSize,
         boost::function<void(const sensor_msgs::LaserScan::ConstPtr&)>(
@@ -106,7 +108,7 @@ void Slam::run(){
             }));
     expected_sensor_ids.insert(kLaserScanTopic);
   }
-  if (options.use_multi_echo_laser_scan) {
+  if (options_.use_multi_echo_laser_scan) {
     laser_scan_subscriber = node->node_handle()->subscribe(
         kMultiEchoLaserScanTopic, kInfiniteSubscriberQueueSize,
         boost::function<void(const sensor_msgs::MultiEchoLaserScan::ConstPtr&)>(
@@ -121,10 +123,10 @@ void Slam::run(){
 
   // For 3D SLAM, subscribe to all point clouds topics.
 
-  if (options.num_point_clouds > 0) {
-    for (int i = 0; i < options.num_point_clouds; ++i) {
+  if (options_.num_point_clouds > 0) {
+    for (int i = 0; i < options_.num_point_clouds; ++i) {
       string topic = kPointCloud2Topic;
-      if (options.num_point_clouds > 1) {
+      if (options_.num_point_clouds > 1) {
         topic += "_" + std::to_string(i + 1);
       }
       point_cloud_subscribers.push_back(node->node_handle()->subscribe(
@@ -142,9 +144,9 @@ void Slam::run(){
   // For 2D SLAM, subscribe to the IMU if we expect it. For 3D SLAM, the IMU is
   // required.
 
-  if (options.map_builder_options.use_trajectory_builder_3d() ||
-      (options.map_builder_options.use_trajectory_builder_2d() &&
-       options.map_builder_options.trajectory_builder_2d_options()
+  if (options_.map_builder_options.use_trajectory_builder_3d() ||
+      (options_.map_builder_options.use_trajectory_builder_2d() &&
+       options_.map_builder_options.trajectory_builder_2d_options()
            .use_imu_data())) {
     imu_subscriber = node->node_handle()->subscribe(
         kImuTopic, kInfiniteSubscriberQueueSize,
@@ -159,7 +161,7 @@ void Slam::run(){
 
   // For both 2D and 3D SLAM, odometry is optional.
 
-  if (options.use_odometry) {
+  if (options_.use_odometry) {
     odometry_subscriber = node->node_handle()->subscribe(
         kOdometryTopic, kInfiniteSubscriberQueueSize,
         boost::function<void(const nav_msgs::Odometry::ConstPtr&)>(
@@ -172,7 +174,7 @@ void Slam::run(){
   }
 
   trajectory_id = node->map_builder_bridge()->AddTrajectory(
-      expected_sensor_ids, options.tracking_frame);
+      expected_sensor_ids, options_.tracking_frame);
 
   finish_trajectory_server =
       node->node_handle()->advertiseService(
@@ -184,7 +186,7 @@ void Slam::run(){
               ::cartographer_ros_msgs::FinishTrajectory::Response&) {
             const int previous_trajectory_id = trajectory_id;
             trajectory_id = node->map_builder_bridge()->AddTrajectory(
-                expected_sensor_ids, options.tracking_frame);
+                expected_sensor_ids, options_.tracking_frame);
             node->map_builder_bridge()->FinishTrajectory(previous_trajectory_id);
             node->map_builder_bridge()->WriteAssets(request.stem);
             return true;

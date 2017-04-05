@@ -1,5 +1,5 @@
 <library path="lib/liblaser_module">
-  <class name="laser_module/Slam" type="cartographer_ros::Slam" base_class_type="hi_slam::SLAMBase">
+  <class name="laser_module" type="cartographer_ros::Slam" base_class_type="hi_slam::SLAMBase">
     <description>
       A test implementation of laser_module plugin
     </description>
