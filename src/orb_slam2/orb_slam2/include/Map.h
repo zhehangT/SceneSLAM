@@ -83,10 +83,6 @@ protected:
 
     std::vector<MapPoint*> mvpReferenceMapPoints;
 
-    //添加相机位姿
-    cv::Mat mCameraPose;
-    bool mbCameraUpdated;
-
     long unsigned int mnMaxKFid;
 
     // Index related to a big change in the map (loop closure, global BA)
@@ -95,6 +91,10 @@ protected:
     std::mutex mMutexMap;
 
     bool mbMapUpdated;
+
+    //添加相机位姿
+    cv::Mat mCameraPose;
+    bool mbCameraUpdated;
 
 };
 

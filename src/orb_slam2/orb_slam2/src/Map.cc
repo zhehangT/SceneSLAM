@@ -27,7 +27,7 @@ namespace ORB_SLAM2
 
 Map::Map():mnMaxKFid(0),mnBigChangeIdx(0),mbMapUpdated(false),mbCameraUpdated(false)
 {
-  //    mCameraPose =
+
 }
 
 void Map::AddKeyFrame(KeyFrame *pKF)

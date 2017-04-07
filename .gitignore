@@ -11,8 +11,8 @@ cmake-build-debug/
 *.workspace
 *.user
 *.bag
-.catkin_workspace
 ORBvoc.txt
 .catkin_tools
-libORB_SLAM2.so
+*.so
 Examples/
+.catkin_workspace

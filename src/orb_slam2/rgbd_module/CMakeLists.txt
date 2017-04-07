@@ -34,6 +34,7 @@ find_package(catkin REQUIRED COMPONENTS
     tf2_ros
     hi_slam
     pluginlib
+    roslib
     )
 
 find_package(OpenCV 3.0 QUIET)
@@ -74,7 +75,7 @@ set(LIBS
     ${Pangolin_LIBRARIES}
     ${PROJECT_SOURCE_DIR}/../orb_slam2/Thirdparty/DBoW2/lib/libDBoW2.so
     ${PROJECT_SOURCE_DIR}/../orb_slam2/Thirdparty/g2o/lib/libg2o.so
-    ${PROJECT_SOURCE_DIR}/../orb_slam2/lib/libORB_SLAM2.so
+    ${PROJECT_SOURCE_DIR}/../orb_slam2/lib/liborb_slam2.so
     )
 
 

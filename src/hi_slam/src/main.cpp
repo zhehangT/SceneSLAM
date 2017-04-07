@@ -16,6 +16,7 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "hi_slam");
 
   hi_slam::SoftwareBus softwareBus;
+  softwareBus.StartSoftwareBus();
 
   ros::spin();
 

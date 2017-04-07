@@ -25,7 +25,6 @@ namespace hi_slam{
 
     //start with "rgdb_module" will die, do not know why
     slam_module_ = slam_loader_.createInstance("laser_module");
-    StartSoftwareBus();
 
     pose.translation.x = 0;
     pose.translation.y = 0;
@@ -85,6 +84,7 @@ namespace hi_slam{
         state_ = RUNNING;
         break;
       case RUNNING:
+        check_scene();
 //        publish_transform();
         break;
 
@@ -145,6 +145,17 @@ namespace hi_slam{
       exit(1);
     }
   }
+
+
+  void SoftwareBus::check_scene(){
+
+
+
+
+  }
+
+
+
 
   void SoftwareBus::shutdown_slam(){
 

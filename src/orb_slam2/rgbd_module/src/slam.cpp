@@ -8,6 +8,7 @@
 */
 
 #include<pluginlib/class_list_macros.h>
+#include<ros/package.h>
 #include<ros/ros.h>
 #include<iostream>
 #include<fstream>
@@ -25,21 +26,8 @@ Slam::Slam()
    depth_sub_(nh_, "/camera/depth_registered/image_raw", 1),
    sync_(sync_pol(10), rgb_sub_,depth_sub_){
 
-//  char *buffer;
-//  //也可以将buffer作为输出参数
-//  if((buffer = getcwd(NULL, 0)) == NULL)
-//  {
-//    perror("getcwd error");
-//  }
-//  else
-//  {
-//    printf("fuck the cwd %s\n", buffer);
-//    free(buffer);
-//  }
-//  当前路径为：/home/tzh/.ros
-
-  std::string vocabulary = "/home/tzh/HiSLAM/src/orb_slam2/rgbd_module/config/ORBvoc.txt";
-  std::string settings = "/home/tzh/HiSLAM/src/orb_slam2/rgbd_module/config/TUM1.yaml";
+  std::string vocabulary = ros::package::getPath("rgbd_module") + "/config/ORBvoc.txt";
+  std::string settings = ros::package::getPath("rgbd_module") + "/config/TUM1.yaml";
   SLAM_ = new ORB_SLAM2::System(vocabulary, settings, ORB_SLAM2::System::RGBD, false);
 }
 
