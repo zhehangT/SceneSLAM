@@ -20,47 +20,51 @@ Slam::Slam()
   :tf_buffer(ros::Duration(1e6)),
    tf(tf_buffer){
 
+  ROS_INFO_STREAM("Construct laser_module...");
+
 }
 
 Slam::~Slam(){
 
-  ROS_INFO_STREAM("laser_module detivate...");
+  ROS_INFO("Destruct laser_module...");
+
 }
 
 
 void Slam::Activate(){
 
-  ROS_INFO_STREAM("laser_module activate...");
+  ROS_INFO_STREAM("Activate laser_module...");
 
   google::InitGoogleLogging("laser_module");
 
   cartographer_ros::ScopedRosLogSink ros_log_sink;
-  run();
+  Run();
 }
 
 
 void Slam::Activate(geometry_msgs::Transform& pose, string map_frame){
 
-  options_ = loadOptions();
+  options_ = LoadOptions();
   options_.map_frame = map_frame;
   node = new Node(options_, &tf_buffer, pose, map_frame);
 
-  ROS_INFO_STREAM("laser_module activate with pose...");
+  ROS_INFO("Activate laser_module with pose...");
 
   google::InitGoogleLogging("laser_module");
 
   cartographer_ros::ScopedRosLogSink ros_log_sink;
-  run();
+  Run();
 }
 
 
 void Slam::Shutdown(geometry_msgs::Transform& pose) {
 
-  ROS_INFO_STREAM("laser_module shutdown...");
+  ROS_INFO("Shutdown laser_module with pose...");
 
   node->map_builder_bridge()->FinishTrajectory(trajectory_id);
   google::ShutdownGoogleLogging();
   pose = node->laser_camera_transform;
+  node->node_handle()->shutdown();
   delete node;
 
 }
@@ -68,14 +72,15 @@ void Slam::Shutdown(geometry_msgs::Transform& pose) {
 
 void Slam::Shutdown() {
 
-  ROS_INFO_STREAM("laser_module shutdown...");
+  ROS_INFO_STREAM("Shutdown laser_module...");
   node->map_builder_bridge()->FinishTrajectory(trajectory_id);
   google::ShutdownGoogleLogging();
+  node->node_handle()->shutdown();
   delete node;
 }
 
 
-NodeOptions Slam::loadOptions(){
+NodeOptions Slam::LoadOptions(){
   auto file_resolver = cartographer::common::make_unique<
       cartographer::common::ConfigurationFileResolver>(
       std::vector<string>{ros::package::getPath("cartographer_turtlebot")+"/configuration_files"});
@@ -88,7 +93,7 @@ NodeOptions Slam::loadOptions(){
 
 }
 
-void Slam::run(){
+void Slam::Run(){
 
   constexpr int kInfiniteSubscriberQueueSize = 0;
 

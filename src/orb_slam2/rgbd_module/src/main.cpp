@@ -1,5 +1,5 @@
 /**
-* This file is part of hi_slam.
+* This file is part of rgbd_module.
 *
 * Author: tzh
 * Date: 2017-03-23

@@ -13,18 +13,23 @@
 #include <tf2/LinearMath/Vector3.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <stdlib.h>
-
+#include<yaml-cpp/yaml.h>
 
 namespace hi_slam{
 
   SoftwareBus::SoftwareBus()
     :private_nh_("~"),
      slam_loader_("hi_slam", "hi_slam::SLAMBase"),
-     softbus_frequency_(20),
-     cfg_first_setup_(true){
+     scene_recognition_loader_("hi_slam", "hi_slam::SceneRecognitionBase"),
+     softbus_frequency_(1),
+     first_setup_(true){
 
+    ROS_INFO_STREAM("Initialising hi_slam ...");
+    ReadConfig();
     //start with "rgdb_module" will die, do not know why
     slam_module_ = slam_loader_.createInstance("laser_module");
+    scene_recognition_module_ = scene_recognition_loader_.createInstance(config_.SceneRecognition);
+
 
     pose.translation.x = 0;
     pose.translation.y = 0;
@@ -55,19 +60,8 @@ namespace hi_slam{
 
   void SoftwareBus::StartSoftwareBus(){
 
-    ROS_INFO_STREAM("Initialising hi_slam ...");
-
-
-    dsrv_ = new dynamic_reconfigure::Server<hi_slam::SoftwareBusConfig>(
-            ros::NodeHandle("hi_slam"));
-    dsrv_->getConfigDefault(default_config_);    
-    ROS_INFO("Loading default scene %d", default_config_.scene);
-    dynamic_reconfigure::Server<hi_slam::SoftwareBusConfig>::CallbackType cb = boost::bind(
-                   &SoftwareBus::reconfigureCB, this, _1, _2);
-    dsrv_->setCallback(cb);
-
-    scene_ = default_config_.scene;
-    state_ = START;
+    scene_ = "";
+    state_ = RUNNING;
     softbusThread_ = new std::thread(&SoftwareBus::RunSoftwareBus, this);
   }
 
@@ -76,21 +70,22 @@ namespace hi_slam{
     ros::WallRate r(softbus_frequency_);
     ROS_INFO("Running hi_slam state machine in %d Hz", softbus_frequency_);
 
+    scene_recognition_module_->Activate();
+
     while(nh_.ok()){
 
       switch (state_) {
       case START:
-        start_slam_base_scene(scene_);
+        StartSlamBaseScene(scene_);
         state_ = RUNNING;
         break;
       case RUNNING:
-        check_scene();
-//        publish_transform();
+        CheckScene();
         break;
 
       case RESET:
         ROS_INFO("Running hi_slam state machine in RESET");
-        shutdown_slam();
+        ShutdownSlam();
         state_ = START;
         break;
 
@@ -100,6 +95,8 @@ namespace hi_slam{
       default:
         break;
       }
+//      ROS_INFO("Scene:%s", scene_.c_str());
+
 
     r.sleep();
 
@@ -107,85 +104,82 @@ namespace hi_slam{
   }
 
 
-  void SoftwareBus::start_slam_base_scene(int scene){
+  void SoftwareBus::StartSlamBaseScene(std::string scene){
 
-    switch(scene_){
+    if(scene != ""){
 
-    case 0:
-
-      start_slam_base_name("rgbd_module");
-
-      break;
-
-    case 1:
-
-      start_slam_base_name("laser_module");
-      break;
-
-    case 2:
-      break;
-
-
+      ROS_INFO("StartSlamBaseScene %s", config_.SceneConfig[scene].c_str());
+      StartSlamBaseName(config_.SceneConfig[scene].c_str());
     }
+
 
   }
 
-  void SoftwareBus::start_slam_base_name(std::string name){
+  void SoftwareBus::StartSlamBaseName(std::string name){
 
     try{
       slam_module_ = slam_loader_.createInstance(name);
       std::string map_frame = name + "_" + std::to_string(map_id++);
-      std::cout<< map_frame <<std::endl;
       slam_module_->Activate(pose, map_frame);
       ROS_INFO("Start slam module %s", name.c_str());
     }catch(const pluginlib::PluginlibException &ex){
       ROS_FATAL(
             "Failed to create the %s plugin, are you sure it is properly registered and that the containing library is built? Exception: %s",
-            default_config_.slam_module.c_str(), ex.what());
+            name.c_str(), ex.what());
       exit(1);
     }
   }
 
 
-  void SoftwareBus::check_scene(){
+  void SoftwareBus::CheckScene(){
 
+    std::string scene = scene_recognition_module_->scene();
+    ROS_INFO("Scene: %s", scene.c_str());
 
+    if(scene_ != scene && config_.SceneConfig.find(scene) != config_.SceneConfig.end()){
+      if(first_setup_){
+        scene_ = scene;
+        state_ = START;
+        first_setup_ = false;
+      }
+      else{
+        scene_ = scene;
+        state_ = RESET;
+      }
+      ROS_INFO("Change to Scene: %s", scene_.c_str());
 
+    }
 
   }
 
 
 
 
-  void SoftwareBus::shutdown_slam(){
+  void SoftwareBus::ShutdownSlam(){
 
-    geometry_msgs::Transform pose_temp;
-    slam_module_->Shutdown(pose_temp);
+    if(scene_ != ""){
+      geometry_msgs::Transform pose_temp;
+      slam_module_->Shutdown(pose_temp);
 
-//    tf2::Quaternion q1(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w);
-//    tf2::Quaternion q2(pose_temp.rotation.x, pose_temp.rotation.y, pose_temp.rotation.z, pose_temp.rotation.w);
-    tf2::Matrix3x3 r1(tf2::Quaternion(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w));
-    tf2::Matrix3x3 r2(tf2::Quaternion(pose_temp.rotation.x, pose_temp.rotation.y, pose_temp.rotation.z, pose_temp.rotation.w));
-
-
-    tf2::Vector3 t1(pose.translation.x, pose.translation.y, pose.translation.z);
-    tf2::Vector3 t2(pose_temp.translation.x, pose_temp.translation.y, pose_temp.translation.z);
-    t1 = r1 * t2 + t1;
-    r1 = r1 * r2;
-    tf2::Quaternion q;
-    r1.getRotation(q);
-
-//    last_pose = pose;
-    pose.translation.x = t1.getX();
-    pose.translation.y = t1.getY();
-    pose.translation.z = t1.getZ();
-    pose.rotation.x = q.getX();
-    pose.rotation.y = q.getY();
-    pose.rotation.z = q.getZ();
-    pose.rotation.w = q.getW();
+      tf2::Matrix3x3 r1(tf2::Quaternion(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w));
+      tf2::Matrix3x3 r2(tf2::Quaternion(pose_temp.rotation.x, pose_temp.rotation.y, pose_temp.rotation.z, pose_temp.rotation.w));
 
 
+      tf2::Vector3 t1(pose.translation.x, pose.translation.y, pose.translation.z);
+      tf2::Vector3 t2(pose_temp.translation.x, pose_temp.translation.y, pose_temp.translation.z);
+      t1 = r1 * t2 + t1;
+      r1 = r1 * r2;
+      tf2::Quaternion q;
+      r1.getRotation(q);
 
+      pose.translation.x = t1.getX();
+      pose.translation.y = t1.getY();
+      pose.translation.z = t1.getZ();
+      pose.rotation.x = q.getX();
+      pose.rotation.y = q.getY();
+      pose.rotation.z = q.getZ();
+      pose.rotation.w = q.getW();
+    }
   }
 
 //  void SoftwareBus::publish_transform(){
@@ -201,29 +195,22 @@ namespace hi_slam{
 
 //  }
 
+  void SoftwareBus::ReadConfig(){
 
+    std::string config_path = ros::package::getPath("hi_slam") + "/data/config.yaml";
 
-  void SoftwareBus::reconfigureCB(hi_slam::SoftwareBusConfig &config, uint32_t level){
+    YAML::Node config_yaml = YAML::LoadFile(config_path);
+    config_.SceneRecognition = config_yaml["SceneRecognition"].as<std::string>();
 
-    boost::recursive_mutex::scoped_lock l(configuration_mutex_);
+    YAML::Node sceneConfig_yaml = config_yaml["SceneConfig"];
 
-    if(cfg_first_setup_){
+    for (std::size_t i=0; i<sceneConfig_yaml.size(); i++) {
 
-      ROS_INFO("Suppose default scene %d", config.scene);
-      last_config_ = config;
-      cfg_first_setup_ = false;
-      return;
-    }
-
-    if(config.scene != last_config_.scene){
-
-      ROS_INFO("Change to scene %d", config.scene);
-      last_config_ = config;
-      scene_ = config.scene;
-      state_ = RESET;
+      string name = sceneConfig_yaml[i]["name"].as<string>();
+      string slam = sceneConfig_yaml[i]["slam"].as<string>();
+      config_.SceneConfig.insert( pair<string, string>(name, slam) );
 
     }
-
   }
 
 

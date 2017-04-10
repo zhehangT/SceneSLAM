@@ -42,8 +42,8 @@ public:
 
 private:
 
-  NodeOptions loadOptions();
-  void run();
+  NodeOptions LoadOptions();
+  void Run();
 
   tf2_ros::Buffer tf_buffer;
   tf2_ros::TransformListener tf;

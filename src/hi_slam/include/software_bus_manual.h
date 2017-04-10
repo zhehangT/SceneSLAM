@@ -29,11 +29,11 @@ namespace hi_slam {
   };
 
 
-  class SoftwareBus{
+  class SoftwareBusManual{
 
   public:
-    SoftwareBus();
-    ~SoftwareBus();
+    SoftwareBusManual();
+    ~SoftwareBusManual();
 
     void StartSoftwareBus();
 
@@ -52,8 +52,6 @@ namespace hi_slam {
     pluginlib::ClassLoader<hi_slam::SLAMBase> slam_loader_;
     boost::shared_ptr<hi_slam::SLAMBase> slam_module_;
 
-    pluginlib::ClassLoader<hi_slam::SceneRecognitionBase> scene_recognition_loader_;
-    boost::shared_ptr<hi_slam::SceneRecognitionBase> scene_recognition_module_;
 
 
     /*
@@ -61,21 +59,25 @@ namespace hi_slam {
      * */
     SoftwareBusState state_;
     int softbus_frequency_;
-    std::string scene_;
+    int scene_;
     std::thread *softbusThread_;
 
 
     /*
-     *
+     * dynamic_reconfigure
      * */
-    bool first_setup_ = true;
+    dynamic_reconfigure::Server <hi_slam::SoftwareBusConfig> *dsrv_;
+    void reconfigureCB(hi_slam::SoftwareBusConfig &config, uint32_t level);
+    boost::recursive_mutex configuration_mutex_;
+    hi_slam::SoftwareBusConfig last_config_;
+    hi_slam::SoftwareBusConfig default_config_;
+    bool cfg_first_setup_ = true;
 
 
-    void StartSlamBaseScene(std::string scene);
+    void StartSlamBaseScene(int scene);
     void StartSlamBaseName(std::string name);
     void ShutdownSlam();
     void CheckScene();
-    void ReadConfig();
 //    void publish_transform();
 
     geometry_msgs::Transform pose;
@@ -83,7 +85,6 @@ namespace hi_slam {
 
     int map_id;
 
-    hi_slam::Config config_;
 
   };
 

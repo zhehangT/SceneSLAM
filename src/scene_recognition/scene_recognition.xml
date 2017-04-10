@@ -1,0 +1,7 @@
+<library path="lib/libscene_recognition">
+  <class name="scene_recognition" type="scene_recognition::SceneRecognition" base_class_type="hi_slam::SceneRecognitionBase">
+    <description>
+      A implementation of scene_recognition plugin
+    </description>
+  </class>
+</library>

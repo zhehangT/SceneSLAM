@@ -34,8 +34,10 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_ros
   pluginlib
   dynamic_reconfigure
+  roslib
 )
 
+find_package(yaml-cpp REQUIRED)
 
 generate_dynamic_reconfigure_options(
     cfg/hi_slam.cfg
@@ -51,35 +53,55 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
-
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
+Message("YAML_INCLUDE:${YAML_CPP_INCLUDE_DIR}")
 
 include_directories(
 ${catkin_INCLUDE_DIRS}
 ${PROJECT_SOURCE_DIR}
 ${PROJECT_SOURCE_DIR}/include
+${YAML_CPP_INCLUDE_DIR}
 )
 
 
 set(LIBS 
 ${catkin_LIBRARIES}
+${YAML_CPP_LIBRARIES}
 )
 
+
+add_executable(test_manual
+src/test_manual.cpp
+src/software_bus_manual.cpp
+)
+target_link_libraries(test_manual
+${LIBS})
+
+add_dependencies(test_manual ${PROJECT_NAME}_gencfg)
 
 add_executable(main
 src/main.cpp
-src/software_bus.cpp)
+src/software_bus.cpp
+)
 target_link_libraries(main
 ${LIBS})
 
-add_dependencies(main ${PROJECT_NAME}_gencfg)
 
 
-add_executable(test_main
-src/test_main.cpp
+add_executable(test_slam
+src/test_slam.cpp
 )
-target_link_libraries(test_main
+target_link_libraries(test_slam
 ${LIBS})
+
+
+add_executable(test_config
+src/test_config.cpp
+    )
+
+target_link_libraries(test_config
+${LIBS}
+    )
+
+
+
 

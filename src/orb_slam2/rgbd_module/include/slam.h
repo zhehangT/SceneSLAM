@@ -47,7 +47,7 @@ private:
   message_filters::Subscriber<sensor_msgs::Image> rgb_sub_;
   message_filters::Subscriber<sensor_msgs::Image> depth_sub_;
   typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> sync_pol;
-  message_filters::Synchronizer<sync_pol> sync_;
+  message_filters::Synchronizer<sync_pol>* sync_;
 
 };
 }

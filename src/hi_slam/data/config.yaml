@@ -1,0 +1,13 @@
+%YAML:1.0
+
+# scene recognition plug name
+SceneRecognition: scene_recognition
+
+SceneConfig:
+  - name: Dark
+    slam: laser_module
+  #- name: Light
+    #slam: rgbd_module
+  - name: Light
+    slam: rgbd_module
+    

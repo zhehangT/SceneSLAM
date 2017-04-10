@@ -1,7 +1,7 @@
 <library path="lib/librgbd_module">
   <class name="rgbd_module" type="rgbd_module::Slam" base_class_type="hi_slam::SLAMBase">
     <description>
-      A test implementation of rgbd_module plugin
+      A implementation of rgbd_module plugin
     </description>
   </class>
 </library>
