@@ -34,7 +34,7 @@ void Test::Check(){
   while(ros::ok()){
 
 
-//    ROS_INFO("Get Scene:%s", sceneRecognition->scene().c_str());
+    ROS_INFO("Get Scene:%s", sceneRecognition->scene().c_str());
 
 
     rate.sleep();

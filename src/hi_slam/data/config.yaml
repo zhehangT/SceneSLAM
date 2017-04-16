@@ -3,11 +3,10 @@
 # scene recognition plug name
 SceneRecognition: scene_recognition
 
+# scene - slam
 SceneConfig:
   - name: Dark
     slam: laser_module
-  #- name: Light
-    #slam: rgbd_module
   - name: Light
     slam: rgbd_module
     
