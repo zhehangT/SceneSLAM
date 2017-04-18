@@ -31,7 +31,13 @@ find_package(catkin REQUIRED COMPONENTS
     cv_bridge
     )
 
-find_package(OpenCV 3.0 REQUIRED)
+find_package(OpenCV 3.0 QUIET)
+if(NOT OpenCV_FOUND)
+    find_package(OpenCV 2.4.3 QUIET)
+    if(NOT OpenCV_FOUND)
+        message(FATAL_ERROR "OpenCV > 2.4.3 not found.")
+    endif()
+endif()
 
 catkin_package(
 #  INCLUDE_DIRS include
