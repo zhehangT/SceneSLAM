@@ -22,8 +22,7 @@
 
 MapPublisher::MapPublisher(ORB_SLAM2::Map* pMap, geometry_msgs::Transform& pose, string map_frame):mpMap(pMap), mbCameraUpdated(false)
 {
-//    const char* MAP_FRAME_ID = "/ORB_SLAM/World";
-//    const char* MAP_FRAME_ID = "rgbd_map";
+
     MAP_FRAME_ID = map_frame;
     const char* POINTS_NAMESPACE = "MapPoints";
     const char* KEYFRAMES_NAMESPACE = "KeyFrames";
@@ -110,6 +109,11 @@ MapPublisher::MapPublisher(ORB_SLAM2::Map* pMap, geometry_msgs::Transform& pose,
     publisher.publish(mCovisibilityGraph);
     publisher.publish(mKeyFrames);
     publisher.publish(mCurrentCamera);
+
+
+    path_pub = nh.advertise<nav_msgs::Path>("ORB_SLAM/Trajectory",10);
+    path.header.frame_id = MAP_FRAME_ID;
+
 
     rgbd_camera_transform.translation.x = 0;
     rgbd_camera_transform.translation.y = 0;
@@ -325,9 +329,9 @@ void MapPublisher::PublishKeyFrames(const vector<ORB_SLAM2::KeyFrame*> &vpKFs)
     mCovisibilityGraph.header.stamp = ros::Time::now();
     mMST.header.stamp = ros::Time::now();
 
-    publisher.publish(mKeyFrames);
-    publisher.publish(mCovisibilityGraph);
-    publisher.publish(mMST);
+//    publisher.publish(mKeyFrames);
+//    publisher.publish(mCovisibilityGraph);
+//    publisher.publish(mMST);
 }
 
 void MapPublisher::PublishCurrentCamera(const cv::Mat &Tcw)
@@ -400,7 +404,7 @@ void MapPublisher::PublishCurrentCamera(const cv::Mat &Tcw)
 
     mCurrentCamera.header.stamp = ros::Time::now();
 
-    publisher.publish(mCurrentCamera);
+//    publisher.publish(mCurrentCamera);
 
 
     {
@@ -458,6 +462,16 @@ void MapPublisher::PublishCurrentCamera(const cv::Mat &Tcw)
         //      ROS_ERROR("FUCK:%s",ex.what());
       }
 
+
+      geometry_msgs::PoseStamped camera_pose;
+      camera_pose.pose.position.x = rgbd_camera_transform.translation.x;
+      camera_pose.pose.position.y = rgbd_camera_transform.translation.y;
+      camera_pose.pose.position.z = rgbd_camera_transform.translation.z;
+      camera_pose.pose.orientation = rgbd_camera_transform.rotation;
+      camera_pose.header.stamp = ros::Time::now();
+      camera_pose.header.frame_id = MAP_FRAME_ID;
+      path.poses.push_back(camera_pose);
+      path_pub.publish(path);
 
     }
 

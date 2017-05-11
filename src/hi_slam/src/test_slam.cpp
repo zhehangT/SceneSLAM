@@ -15,7 +15,7 @@
 int main(int argc, char** argv)
 {
 
-  ros::init(argc, argv, "test_main");
+  ros::init(argc, argv, "test_slam");
 
   pluginlib::ClassLoader<hi_slam::SLAMBase> slam_loader_("hi_slam", "hi_slam::SLAMBase");
 

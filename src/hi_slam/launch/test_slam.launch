@@ -1,7 +1,7 @@
 <launch>
 
     <param name="/use_sim_time" value="true" />
-    <node pkg="hi_slam" type="test_main" name="test_main" output="screen"> </node>
+    <node pkg="hi_slam" type="test_slam" name="test_slam" output="screen"> </node>
 
 
     <node name="flat_world_imu_node" pkg="cartographer_turtlebot"

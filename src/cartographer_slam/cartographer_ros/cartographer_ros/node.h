@@ -30,6 +30,7 @@
 #include "cartographer_ros_msgs/TrajectorySubmapList.h"
 #include "ros/ros.h"
 #include "tf2_ros/transform_broadcaster.h"
+#include "nav_msgs/Path.h"
 
 namespace cartographer_ros {
 
@@ -96,6 +97,10 @@ class Node {
   // We have to keep the timer handles of ::ros::WallTimers around, otherwise
   // they do not fire.
   std::vector<::ros::WallTimer> wall_timers_;
+
+  ros::Publisher path_pub;
+  nav_msgs::Path path;
+
 };
 
 }  // namespace cartographer_ros

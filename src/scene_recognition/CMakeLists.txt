@@ -70,10 +70,26 @@ target_link_libraries(scene_recognition
 
 
 add_executable(main
-    src/main
+    src/main.cpp
     src/scene_recognition.cpp
     )
 
 target_link_libraries(main
+    ${LIBS}
+    )
+
+add_executable(experiment
+    src/test.cpp
+    )
+
+target_link_libraries(experiment
+    ${LIBS}
+    )
+
+add_executable(experiment2
+    src/test2.cpp
+    )
+
+target_link_libraries(experiment2
     ${LIBS}
     )

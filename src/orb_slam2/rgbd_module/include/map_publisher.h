@@ -23,6 +23,7 @@
 
 
 #include<visualization_msgs/Marker.h>
+#include<nav_msgs/Path.h>
 #include<mutex>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
@@ -65,6 +66,8 @@ private:
 
     ros::NodeHandle nh;
     ros::Publisher publisher;
+    ros::Publisher path_pub;
+
 
     visualization_msgs::Marker mPoints;
     visualization_msgs::Marker mReferencePoints;
@@ -73,6 +76,7 @@ private:
     visualization_msgs::Marker mCovisibilityGraph;
     visualization_msgs::Marker mMST;
     visualization_msgs::Marker mCurrentCamera;
+    nav_msgs::Path path;
 
     float fCameraSize;
     float fPointSize;

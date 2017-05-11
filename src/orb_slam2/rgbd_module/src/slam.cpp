@@ -26,7 +26,7 @@ Slam::Slam()
    depth_sub_(nh_, "/camera/depth_registered/image_raw", 1)/*,
    sync_(sync_pol(10), rgb_sub_,depth_sub_)*/{
 
-  sync_ = new message_filters::Synchronizer<sync_pol>(sync_pol(10), rgb_sub_,depth_sub_);
+  sync_ = new message_filters::Synchronizer<sync_pol>(sync_pol(10), rgb_sub_, depth_sub_);
   ROS_INFO_STREAM("Construct rgbd_module...");
 
 }
