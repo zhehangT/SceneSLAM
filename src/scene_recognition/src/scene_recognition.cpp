@@ -70,8 +70,8 @@ void SceneRecognition::GrabImage(const sensor_msgs::ImageConstPtr& msg){
         count++;
       }
     }
-//    cout << ave << endl;
-    if(ave <= 110 || num / total < 0.5){
+//    cout << ave << endl;|| num / total < 0.5
+    if(ave <= 110 ){
       if(count_-- <= 0){
         scene_ = "Dark";
         count_ = 20;

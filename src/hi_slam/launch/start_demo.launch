@@ -1,5 +1,5 @@
 <launch>
-
+    <param name="/use_sim_time" value="true" />
     <node pkg="hi_slam" type="main" name="main" output="screen">
     </node>
 

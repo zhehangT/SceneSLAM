@@ -1,0 +1,12 @@
+<launch>
+
+<!--    <param name="/use_sim_time" value="true" />-->
+    <include file="$(find turtlebot_bringup)/launch/3dsensor.launch" />
+    <param name="/depthimage_to_laserscan/output_frame_id"
+        value="camera_rgb_frame" />
+
+
+
+
+
+</launch>

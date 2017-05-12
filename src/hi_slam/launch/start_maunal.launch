@@ -1,0 +1,30 @@
+<launch>
+
+    <include file="$(find turtlebot_bringup)/launch/3dsensor.launch" />
+    <!-- We override the parameter here to remove the leading slash which should
+         not be there according to tf2 naming rules. -->
+    <param name="/depthimage_to_laserscan/output_frame_id"
+        value="camera_rgb_frame" />
+    <include file="$(find turtlebot_bringup)/launch/minimal.launch" />
+
+
+    <node pkg="hi_slam" type="test_manual" name="test_manual" output="screen"> </node>
+
+
+    <node name="flat_world_imu_node" pkg="cartographer_turtlebot"
+        type="cartographer_flat_world_imu_node" output="screen">
+        <remap from="imu_in" to="/mobile_base/sensors/imu_data_raw" />
+        <remap from="imu_out" to="/imu" />
+    </node>
+
+    <node name="rviz" pkg="rviz" type="rviz" required="true"
+        args="-d $(find hi_slam
+        )/data/demo_turtlebot.rviz" />
+
+
+    <node name="rqt_image_view" pkg="rqt_image_view" type="rqt_image_view"/>
+
+    <node name="rqt_reconfigure" pkg="rqt_reconfigure" type="rqt_reconfigure"/>
+
+
+</launch>
