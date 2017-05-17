@@ -11,4 +11,4 @@ equipped with Kinect sensor based on our framework. We design an scene detection
 
 The system will work well no matter it is *Bright* or *Dark* in indoor environment.
 
-![image](http://oeaxm0g1o.bkt.clouddn.com/demo.gif)
+![image](http://oeaxm0g1o.bkt.clouddn.com/demo2.gif)
