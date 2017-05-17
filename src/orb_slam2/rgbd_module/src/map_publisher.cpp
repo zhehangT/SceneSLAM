@@ -113,6 +113,8 @@ MapPublisher::MapPublisher(ORB_SLAM2::Map* pMap, geometry_msgs::Transform& pose,
 
     path_pub = nh.advertise<nav_msgs::Path>("ORB_SLAM/Trajectory",10);
     path.header.frame_id = MAP_FRAME_ID;
+//    path.header.frame_id = "map";
+
 
 
     rgbd_camera_transform.translation.x = 0;
@@ -470,6 +472,8 @@ void MapPublisher::PublishCurrentCamera(const cv::Mat &Tcw)
       camera_pose.pose.orientation = rgbd_camera_transform.rotation;
       camera_pose.header.stamp = ros::Time::now();
       camera_pose.header.frame_id = MAP_FRAME_ID;
+//      camera_pose.header.frame_id = "map";
+
       path.poses.push_back(camera_pose);
       path_pub.publish(path);
 

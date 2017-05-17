@@ -100,6 +100,7 @@ class Node {
 
   ros::Publisher path_pub;
   nav_msgs::Path path;
+  int path_count;
 
 };
 

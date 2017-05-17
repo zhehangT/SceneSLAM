@@ -18,7 +18,7 @@
 
     <node name="rqt_reconfigure" pkg="rqt_reconfigure" type="rqt_reconfigure"/>
 
-    <node name="playbag" pkg="rosbag" type="play"
-        args="--pause --clock /home/tzh/Data/data-0320.bag" launch-prefix="xterm -e"/>
+    <!-- node name="playbag" pkg="rosbag" type="play"
+        args="pause clock /home/tzh/Data/data-0320.bag" launch-prefix="xterm -e"/> -->
 
 </launch>

@@ -67,6 +67,8 @@ Node::Node(const NodeOptions& options, tf2_ros::Buffer* const tf_buffer, geometr
 
   path_pub = node_handle_.advertise<nav_msgs::Path>("Laser/Trajectory",10);
   path.header.frame_id = options_.map_frame;
+//  path.header.frame_id = "map";
+  path_count = 0;
 
 }
 
@@ -193,15 +195,23 @@ void Node::PublishTrajectoryStates(const ::ros::WallTimerEvent& timer_event) {
 
       }
 
-      geometry_msgs::PoseStamped camera_pose;
-      camera_pose.pose.position.x = laser_camera_transform.translation.x;
-      camera_pose.pose.position.y = laser_camera_transform.translation.y;
-      camera_pose.pose.position.z = laser_camera_transform.translation.z;
-      camera_pose.pose.orientation = laser_camera_transform.rotation;
-      camera_pose.header.stamp = ros::Time::now();
-      camera_pose.header.frame_id = options_.map_frame;
-      path.poses.push_back(camera_pose);
-      path_pub.publish(path);
+      if(path_count == 0){
+        geometry_msgs::PoseStamped camera_pose;
+        camera_pose.pose.position.x = laser_camera_transform.translation.x;
+        camera_pose.pose.position.y = laser_camera_transform.translation.y;
+        camera_pose.pose.position.z = laser_camera_transform.translation.z;
+        camera_pose.pose.orientation = laser_camera_transform.rotation;
+        camera_pose.header.stamp = ros::Time::now();
+        camera_pose.header.frame_id = options_.map_frame;
+//        camera_pose.header.frame_id = "map";
+        path.poses.push_back(camera_pose);
+        path_pub.publish(path);
+        path_count = 10;
+      }
+
+      path_count--;
+
+
 
     }
   }

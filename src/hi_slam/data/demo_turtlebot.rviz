@@ -5,6 +5,8 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /TF1
+        - /Path1
+        - /Path3
       Splitter Ratio: 0.600670993
     Tree Height: 707
   - Class: rviz/Selection
@@ -55,13 +57,13 @@ Visualization Manager:
         base_footprint:
           Value: false
         base_link:
-          Value: true
+          Value: false
         camera_depth_frame:
           Value: false
         camera_depth_optical_frame:
           Value: false
         camera_link:
-          Value: true
+          Value: false
         camera_rgb_frame:
           Value: true
         camera_rgb_optical_frame:
@@ -77,11 +79,11 @@ Visualization Manager:
         cliff_sensor_right_link:
           Value: false
         gyro_link:
-          Value: true
-        laser_module_0:
+          Value: false
+        laser_module_1:
           Value: true
         map:
-          Value: true
+          Value: false
         odom:
           Value: false
         plate_bottom_link:
@@ -122,7 +124,9 @@ Visualization Manager:
           Value: false
         pole_top_3_link:
           Value: false
-        rgbd_module_1:
+        rgbd_module_0:
+          Value: true
+        rgbd_module_2:
           Value: true
         wheel_left_link:
           Value: false
@@ -130,14 +134,14 @@ Visualization Manager:
           Value: false
       Marker Scale: 1
       Name: TF
-      Show Arrows: true
+      Show Arrows: false
       Show Axes: true
       Show Names: true
       Tree:
         map:
-          laser_module_0:
+          laser_module_1:
             {}
-          rgbd_module_1:
+          rgbd_module_0:
             odom:
               base_footprint:
                 base_link:
@@ -203,6 +207,8 @@ Visualization Manager:
                     {}
                   wheel_right_link:
                     {}
+          rgbd_module_2:
+            {}
       Update Interval: 0
       Value: true
     - Class: Submaps
@@ -296,6 +302,28 @@ Visualization Manager:
       Topic: Laser/Trajectory
       Unreliable: false
       Value: true
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz/Path
+      Color: 255; 85; 255
+      Enabled: true
+      Head Diameter: 0.300000012
+      Head Length: 0.200000003
+      Length: 0.300000012
+      Line Style: Lines
+      Line Width: 0.0299999993
+      Name: Path
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Style: None
+      Radius: 0.0299999993
+      Shaft Diameter: 0.100000001
+      Shaft Length: 0.100000001
+      Topic: /ORB
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 100; 100; 100
@@ -328,7 +356,7 @@ Visualization Manager:
         Value: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 96.126236
+      Scale: 189.73616
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
       X: 2.42587495
