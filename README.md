@@ -1,4 +1,4 @@
-# HiSLAM
+# SceneSLAM
 Author: Zhehang Tong
 
 **5 May 2017**: Demo Version
