@@ -1,12 +1,14 @@
 %YAML:1.0
 
 # scene recognition plug name
-SceneRecognition: scene_recognition
+SceneRecognition: scene_recognition_cnn
 
 # scene - slam
 SceneConfig:
   - name: Dark
     slam: laser_module
-  - name: Light
-    slam: rgbd_module
+  - name: Indoor
+    slam: rgbd_mono_module
+  - name: Outdoor
+    slam: rgbd_mono_module
     

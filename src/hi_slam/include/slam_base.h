@@ -23,12 +23,16 @@ namespace hi_slam {
 
         virtual ~SLAMBase() {}
 
-        virtual void Activate() = 0;
+        virtual void Activate() {}
 
-        virtual void Shutdown() = 0;
+        virtual void Shutdown() {}
 
         virtual void Activate(geometry_msgs::Transform& pose, std::string map_frame) {}
+
+        virtual void Activate(geometry_msgs::Transform& pose, std::string map_frame, std::string scene) {}
+
         virtual void Shutdown(geometry_msgs::Transform& pose) {}
+
 
 
     };

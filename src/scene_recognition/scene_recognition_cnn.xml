@@ -1,0 +1,7 @@
+<library path="lib/libscene_recognition_cnn">
+  <class name="scene_recognition_cnn" type="scene_recognition::SceneRecognitionCNN" base_class_type="hi_slam::SceneRecognitionBase">
+    <description>
+      A implementation of scene_recognition plugin
+    </description>
+  </class>
+</library>

@@ -68,8 +68,8 @@ namespace hi_slam {
     /*
      *
      * */
-    bool first_setup_ = true;
-
+    bool first_setup_;
+    bool new_module_;
 
     void StartSlamBaseScene(std::string scene);
     void StartSlamBaseName(std::string name);

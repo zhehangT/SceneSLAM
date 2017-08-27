@@ -54,7 +54,7 @@ void SceneRecognition::GrabImage(const sensor_msgs::ImageConstPtr& msg){
   float ave= 0;
   int count = 1;
   float num = 0;
-  float total = 640 * 480;
+  // float total = 640 * 480;
   try{
     cv_ptrRGB = cv_bridge::toCvShare(msg);
     cv::Mat mImGray = cv_ptrRGB->image;

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(rgbd_module)
+project(rgbd_mono_module)
 
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall  -O3 -march=native ")
@@ -51,7 +51,7 @@ find_package(Pangolin REQUIRED)
 
 catkin_package(
     INCLUDE_DIRS include
-    LIBRARIES rgbd_module
+    LIBRARIES rgbd_mono_module
     CATKIN_DEPENDS
     roscpp
     pluginlib
@@ -80,12 +80,12 @@ set(LIBS
 
 
 ## Declare a C++ library
-add_library(rgbd_module
+add_library(rgbd_mono_module
     src/slam.cpp
     src/map_publisher.cpp
     src/image_grabber.cpp
     )
-target_link_libraries(rgbd_module
+target_link_libraries(rgbd_mono_module
     ${LIBS}
     )
 

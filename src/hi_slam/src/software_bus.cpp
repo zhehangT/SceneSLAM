@@ -1,5 +1,6 @@
 /**
-* This file is part of hi_slam.
+* software_bus schedule a scene recognition module and several slam modules 
+* using a finite-state machine
 *
 * Author: tzh
 * Date: 2017-03-28
@@ -13,7 +14,7 @@
 #include <tf2/LinearMath/Vector3.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <stdlib.h>
-#include<yaml-cpp/yaml.h>
+#include <yaml-cpp/yaml.h>
 
 namespace hi_slam{
 
@@ -26,6 +27,7 @@ namespace hi_slam{
 
     ROS_INFO_STREAM("Initialising hi_slam ...");
     ReadConfig();
+    //TODO
     //start with "rgdb_module" will die, do not know why
     slam_module_ = slam_loader_.createInstance("laser_module");
     scene_recognition_module_ = scene_recognition_loader_.createInstance(config_.SceneRecognition);
@@ -47,6 +49,8 @@ namespace hi_slam{
     last_pose.rotation.z = 0;
     last_pose.rotation.w = 1;
 
+    first_setup_ = true;
+    new_module_ = true;
     map_id = 0;
 
   }
@@ -62,6 +66,8 @@ namespace hi_slam{
 
     scene_ = "";
     state_ = RUNNING;
+
+    new std::thread(&SceneRecognitionBase::Activate, scene_recognition_module_);
     softbusThread_ = new std::thread(&SoftwareBus::RunSoftwareBus, this);
   }
 
@@ -75,10 +81,13 @@ namespace hi_slam{
     while(nh_.ok()){
 
       switch (state_) {
+
       case START:
+        ROS_INFO("Running hi_slam state machine in START");
         StartSlamBaseScene(scene_);
         state_ = RUNNING;
         break;
+        
       case RUNNING:
         CheckScene();
         break;
@@ -89,13 +98,12 @@ namespace hi_slam{
         state_ = START;
         break;
 
-      case IDLE:
+      case IDLE:        
         break;
 
       default:
         break;
       }
-//      ROS_INFO("Scene:%s", scene_.c_str());
 
 
     r.sleep();
@@ -118,9 +126,11 @@ namespace hi_slam{
   void SoftwareBus::StartSlamBaseName(std::string name){
 
     try{
-      slam_module_ = slam_loader_.createInstance(name);
+      if(new_module_){
+        slam_module_ = slam_loader_.createInstance(name);
+      }
       std::string map_frame = name + "_" + std::to_string(map_id++);
-      slam_module_->Activate(pose, map_frame);
+      slam_module_->Activate(pose, map_frame, scene_);
       ROS_INFO("Start slam module %s", name.c_str());
     }catch(const pluginlib::PluginlibException &ex){
       ROS_FATAL(
@@ -142,7 +152,13 @@ namespace hi_slam{
         state_ = START;
         first_setup_ = false;
       }
+      else if(config_.SceneConfig[scene] == config_.SceneConfig[scene_]){
+        new_module_ = false;
+        scene_ = scene;
+        state_ = START;
+      }
       else{
+        new_module_ = true;
         scene_ = scene;
         state_ = RESET;
       }

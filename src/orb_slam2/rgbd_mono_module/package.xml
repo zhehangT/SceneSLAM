@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>rgbd_module</name>
+  <name>rgbd_mono_module</name>
   <version>0.0.0</version>
-  <description>The rgbd_module package</description>
+  <description>The rgbd_mono_module package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -32,6 +32,6 @@
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->
-    <hi_slam plugin="${prefix}/rgbd_module.xml" />
+    <hi_slam plugin="${prefix}/rgbd_mono_module.xml" />
   </export>
 </package>

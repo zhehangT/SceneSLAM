@@ -1,0 +1,7 @@
+<library path="lib/librgbd_mono_module">
+  <class name="rgbd_mono_module" type="rgbd_mono_module::Slam" base_class_type="hi_slam::SLAMBase">
+    <description>
+      A implementation of rgbd_mono_module plugin
+    </description>
+  </class>
+</library>

@@ -9,11 +9,12 @@
 #include<ros/ros.h>
 #include<thread>
 #include "scene_recognition.h"
+#include "scene_recognition_cnn.h"
 
 class Test {
 
 public:
-  Test(scene_recognition::SceneRecognition* s)
+  Test(scene_recognition::SceneRecognitionCNN* s)
     :sceneRecognition(s) {
   }
   ~Test(){}
@@ -21,7 +22,7 @@ public:
   void Check();
 
 private:
-  scene_recognition::SceneRecognition* sceneRecognition;
+  scene_recognition::SceneRecognitionCNN* sceneRecognition;
 
 
 };
@@ -49,12 +50,14 @@ int  main(int argc, char *argv[])
   ros::init(argc, argv, "SceneRecognition");
   ros::start();
 
-  scene_recognition::SceneRecognition sceneRecognition;
+  // scene_recognition::SceneRecognition sceneRecognition;
+  scene_recognition::SceneRecognitionCNN sceneRecognition;
+
   sceneRecognition.Activate();
 
   Test t(&sceneRecognition);
-  std::thread* r =new std::thread(&Test::Check, t);
-
+  // std::thread* r = new std::thread(&Test::Check, t);
+  new std::thread(&Test::Check, t);
 
   ros::spin();
   return 0;

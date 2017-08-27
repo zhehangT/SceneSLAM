@@ -20,7 +20,7 @@
 #include "System.h"
 #include "map_publisher.h"
 
-namespace rgbd_module{
+namespace rgbd_mono_module{
 
 class Slam : public hi_slam::SLAMBase {
 
@@ -32,9 +32,10 @@ public:
 
   void Shutdown();
 
-  void Activate(geometry_msgs::Transform& pose, string map_frame);
+  void Activate(geometry_msgs::Transform& pose, string map_frame, string scene);
 
   void Shutdown(geometry_msgs::Transform& pose);
+
 
   ~Slam();
 
@@ -42,6 +43,7 @@ private:
   ORB_SLAM2::System* SLAM_;
   MapPublisher* mpMapPub_;
   ros::NodeHandle nh_;
+  bool first_active_;
 
   ImageGrabber* igb_;
   message_filters::Subscriber<sensor_msgs::Image> rgb_sub_;

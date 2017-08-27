@@ -15,4 +15,7 @@ ORBvoc.txt
 .catkin_tools
 *.so
 Examples/
+caffe/
 .catkin_workspace
+.ycm_extra_conf.py
+.vscode/

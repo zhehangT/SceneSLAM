@@ -1,8 +1,8 @@
 <launch>
 
     <param name="/use_sim_time" value="true" />
-    <node pkg="hi_slam" type="main" name="main" output="screen"> </node>
 
+    <node pkg="hi_slam" type="main" name="main" output="screen"> </node>
 
     <node name="flat_world_imu_node" pkg="cartographer_turtlebot"
         type="cartographer_flat_world_imu_node" output="screen">
@@ -14,7 +14,7 @@
         args="-d $(find hi_slam
         )/data/demo_turtlebot.rviz" />
 
-<!--    <node name="playbag" pkg="rosbag" type="play"
-        args="pause clock /home/tzh/Data/data-0320.bag" launch-prefix="xterm -e"/>-->
+    <node name="rqt_image_view" pkg="rqt_image_view" type="rqt_image_view"/>
+
 
 </launch>

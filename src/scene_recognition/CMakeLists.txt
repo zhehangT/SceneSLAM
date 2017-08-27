@@ -21,6 +21,7 @@ else()
    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
+LIST(APPEND CMAKE_MODULE_PATH /home/tzh/caffe/build/install/share/Caffe/)
 
 
 find_package(catkin REQUIRED COMPONENTS
@@ -29,6 +30,7 @@ find_package(catkin REQUIRED COMPONENTS
     pluginlib
     std_msgs
     cv_bridge
+    
     )
 
 find_package(OpenCV 3.0 QUIET)
@@ -38,6 +40,9 @@ if(NOT OpenCV_FOUND)
         message(FATAL_ERROR "OpenCV > 2.4.3 not found.")
     endif()
 endif()
+
+find_package(Caffe REQUIRED)
+
 
 catkin_package(
 #  INCLUDE_DIRS include
@@ -49,16 +54,20 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
-
 include_directories(
     include
     ${catkin_INCLUDE_DIRS}
+    ${Caffe_INCLUDE_DIRS}
     )
 
 set(LIBS
     ${catkin_LIBRARIES}
     ${OpenCV_LIBS}
+    ${Caffe_LIBRARIES}
     )
+
+add_definitions(${Caffe_DEFINITIONS})    # ex. -DCPU_ONLY
+
 
 add_library(scene_recognition
     src/scene_recognition.cpp
@@ -68,28 +77,54 @@ target_link_libraries(scene_recognition
     ${LIBS}
     )
 
-
-add_executable(main
-    src/main.cpp
-    src/scene_recognition.cpp
+add_library(scene_recognition_cnn
+    src/classification_alexnet.cpp
+    src/scene_recognition_cnn.cpp
     )
 
-target_link_libraries(main
+target_link_libraries(scene_recognition_cnn
     ${LIBS}
     )
+
+
+add_executable(test_scene_recongnition
+    src/classification_alexnet.cpp
+    src/test_scene_recongnition.cpp
+    src/scene_recognition.cpp
+    src/scene_recognition_cnn.cpp
+    )
+target_link_libraries(test_scene_recongnition
+    ${LIBS}
+    )
+
 
 add_executable(experiment
     src/test.cpp
     )
-
 target_link_libraries(experiment
     ${LIBS}
     )
 
+
 add_executable(experiment2
     src/test2.cpp
     )
-
 target_link_libraries(experiment2
     ${LIBS}
     )
+
+
+
+add_executable(caffe_demo src/classification.cpp)
+target_link_libraries(caffe_demo 
+    ${LIBS}
+    )
+
+
+add_executable(test_classification_alexnet
+  src/test_classification_alexnet.cpp
+  src/classification_alexnet.cpp
+)
+target_link_libraries(test_classification_alexnet
+    ${LIBS}
+)

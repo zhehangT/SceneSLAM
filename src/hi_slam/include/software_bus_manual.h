@@ -59,7 +59,7 @@ namespace hi_slam {
      * */
     SoftwareBusState state_;
     int softbus_frequency_;
-    int scene_;
+    string scene_;
     std::thread *softbusThread_;
 
 
@@ -71,19 +71,24 @@ namespace hi_slam {
     boost::recursive_mutex configuration_mutex_;
     hi_slam::SoftwareBusConfig last_config_;
     hi_slam::SoftwareBusConfig default_config_;
-    bool cfg_first_setup_ = true;
+    bool first_setup_;
+    bool if_new_module_;
 
 
-    void StartSlamBaseScene(int scene);
+    void StartSlamBaseScene(string scene);
     void StartSlamBaseName(std::string name);
     void ShutdownSlam();
     void CheckScene();
+    void ReadConfig();
+
 //    void publish_transform();
 
     geometry_msgs::Transform pose;
     geometry_msgs::Transform last_pose;
 
     int map_id;
+    
+    hi_slam::Config config_;
 
 
   };

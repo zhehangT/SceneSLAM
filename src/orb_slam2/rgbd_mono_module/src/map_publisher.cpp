@@ -106,14 +106,13 @@ MapPublisher::MapPublisher(ORB_SLAM2::Map* pMap, geometry_msgs::Transform& pose,
 
     publisher.publish(mPoints);
     publisher.publish(mReferencePoints);
-    publisher.publish(mCovisibilityGraph);
-    publisher.publish(mKeyFrames);
-    publisher.publish(mCurrentCamera);
+    // publisher.publish(mCovisibilityGraph);
+    // publisher.publish(mKeyFrames);
+    // publisher.publish(mCurrentCamera);
 
 
     path_pub = nh.advertise<nav_msgs::Path>("ORB_SLAM/Trajectory",10);
     path.header.frame_id = MAP_FRAME_ID;
-//    path.header.frame_id = "map";
 
 
 
@@ -204,132 +203,132 @@ void MapPublisher::PublishMapPoints(const vector<ORB_SLAM2::MapPoint*> &vpMPs, c
 
 void MapPublisher::PublishKeyFrames(const vector<ORB_SLAM2::KeyFrame*> &vpKFs)
 {
-    mKeyFrames.points.clear();
-    mCovisibilityGraph.points.clear();
-    mMST.points.clear();
+//     mKeyFrames.points.clear();
+//     mCovisibilityGraph.points.clear();
+//     mMST.points.clear();
 
-    float d = fCameraSize;
+//     float d = fCameraSize;
 
-    //Camera is a pyramid. Define in camera coordinate system
-    cv::Mat o = (cv::Mat_<float>(4,1) << 0, 0, 0, 1);
-    cv::Mat p1 = (cv::Mat_<float>(4,1) << d, d*0.8, d*0.5, 1);
-    cv::Mat p2 = (cv::Mat_<float>(4,1) << d, -d*0.8, d*0.5, 1);
-    cv::Mat p3 = (cv::Mat_<float>(4,1) << -d, -d*0.8, d*0.5, 1);
-    cv::Mat p4 = (cv::Mat_<float>(4,1) << -d, d*0.8, d*0.5, 1);
+//     //Camera is a pyramid. Define in camera coordinate system
+//     cv::Mat o = (cv::Mat_<float>(4,1) << 0, 0, 0, 1);
+//     cv::Mat p1 = (cv::Mat_<float>(4,1) << d, d*0.8, d*0.5, 1);
+//     cv::Mat p2 = (cv::Mat_<float>(4,1) << d, -d*0.8, d*0.5, 1);
+//     cv::Mat p3 = (cv::Mat_<float>(4,1) << -d, -d*0.8, d*0.5, 1);
+//     cv::Mat p4 = (cv::Mat_<float>(4,1) << -d, d*0.8, d*0.5, 1);
 
-    for(size_t i=0, iend=vpKFs.size() ;i<iend; i++)
-    {
-        cv::Mat Tcw = vpKFs[i]->GetPose();
-        cv::Mat Twc = Tcw.inv();
-        cv::Mat ow = vpKFs[i]->GetCameraCenter();
-        cv::Mat p1w = Twc*p1;
-        cv::Mat p2w = Twc*p2;
-        cv::Mat p3w = Twc*p3;
-        cv::Mat p4w = Twc*p4;
+//     for(size_t i=0, iend=vpKFs.size() ;i<iend; i++)
+//     {
+//         cv::Mat Tcw = vpKFs[i]->GetPose();
+//         cv::Mat Twc = Tcw.inv();
+//         cv::Mat ow = vpKFs[i]->GetCameraCenter();
+//         cv::Mat p1w = Twc*p1;
+//         cv::Mat p2w = Twc*p2;
+//         cv::Mat p3w = Twc*p3;
+//         cv::Mat p4w = Twc*p4;
 
-        geometry_msgs::Point msgs_o,msgs_p1, msgs_p2, msgs_p3, msgs_p4;
-        msgs_o.x=ow.at<float>(2);
-//        msgs_o.y=ow.at<float>(1);
-//        msgs_o.z=ow.at<float>(2);
-        msgs_o.y=-ow.at<float>(0);
-        msgs_o.z=ow.at<float>(1);
+//         geometry_msgs::Point msgs_o,msgs_p1, msgs_p2, msgs_p3, msgs_p4;
+//         msgs_o.x=ow.at<float>(2);
+// //        msgs_o.y=ow.at<float>(1);
+// //        msgs_o.z=ow.at<float>(2);
+//         msgs_o.y=-ow.at<float>(0);
+//         msgs_o.z=ow.at<float>(1);
 
-        msgs_p1.x=p1w.at<float>(2);
-//        msgs_p1.y=p1w.at<float>(1);
-//        msgs_p1.z=p1w.at<float>(2);
-        msgs_p1.y=-p1w.at<float>(0);
-        msgs_p1.z=p1w.at<float>(1);
+//         msgs_p1.x=p1w.at<float>(2);
+// //        msgs_p1.y=p1w.at<float>(1);
+// //        msgs_p1.z=p1w.at<float>(2);
+//         msgs_p1.y=-p1w.at<float>(0);
+//         msgs_p1.z=p1w.at<float>(1);
 
 
-        msgs_p2.x=p2w.at<float>(2);
-//        msgs_p2.y=p2w.at<float>(1);
-//        msgs_p2.z=p2w.at<float>(2);
-        msgs_p2.y=-p2w.at<float>(0);
-        msgs_p2.z=p2w.at<float>(1);
+//         msgs_p2.x=p2w.at<float>(2);
+// //        msgs_p2.y=p2w.at<float>(1);
+// //        msgs_p2.z=p2w.at<float>(2);
+//         msgs_p2.y=-p2w.at<float>(0);
+//         msgs_p2.z=p2w.at<float>(1);
 
-        msgs_p3.x=p3w.at<float>(2);
-//        msgs_p3.y=p3w.at<float>(1);
-//        msgs_p3.z=p3w.at<float>(2);
-        msgs_p3.y=-p3w.at<float>(0);
-        msgs_p3.z=p3w.at<float>(1);
+//         msgs_p3.x=p3w.at<float>(2);
+// //        msgs_p3.y=p3w.at<float>(1);
+// //        msgs_p3.z=p3w.at<float>(2);
+//         msgs_p3.y=-p3w.at<float>(0);
+//         msgs_p3.z=p3w.at<float>(1);
 
-        msgs_p4.x=p4w.at<float>(2);
-//        msgs_p4.y=p4w.at<float>(1);
-//        msgs_p4.z=p4w.at<float>(2);
-        msgs_p4.y=-p4w.at<float>(0);
-        msgs_p4.z=p4w.at<float>(1);
+//         msgs_p4.x=p4w.at<float>(2);
+// //        msgs_p4.y=p4w.at<float>(1);
+// //        msgs_p4.z=p4w.at<float>(2);
+//         msgs_p4.y=-p4w.at<float>(0);
+//         msgs_p4.z=p4w.at<float>(1);
 
-        mKeyFrames.points.push_back(msgs_o);
-        mKeyFrames.points.push_back(msgs_p1);
-        mKeyFrames.points.push_back(msgs_o);
-        mKeyFrames.points.push_back(msgs_p2);
-        mKeyFrames.points.push_back(msgs_o);
-        mKeyFrames.points.push_back(msgs_p3);
-        mKeyFrames.points.push_back(msgs_o);
-        mKeyFrames.points.push_back(msgs_p4);
-        mKeyFrames.points.push_back(msgs_p1);
-        mKeyFrames.points.push_back(msgs_p2);
-        mKeyFrames.points.push_back(msgs_p2);
-        mKeyFrames.points.push_back(msgs_p3);
-        mKeyFrames.points.push_back(msgs_p3);
-        mKeyFrames.points.push_back(msgs_p4);
-        mKeyFrames.points.push_back(msgs_p4);
-        mKeyFrames.points.push_back(msgs_p1);
+//         mKeyFrames.points.push_back(msgs_o);
+//         mKeyFrames.points.push_back(msgs_p1);
+//         mKeyFrames.points.push_back(msgs_o);
+//         mKeyFrames.points.push_back(msgs_p2);
+//         mKeyFrames.points.push_back(msgs_o);
+//         mKeyFrames.points.push_back(msgs_p3);
+//         mKeyFrames.points.push_back(msgs_o);
+//         mKeyFrames.points.push_back(msgs_p4);
+//         mKeyFrames.points.push_back(msgs_p1);
+//         mKeyFrames.points.push_back(msgs_p2);
+//         mKeyFrames.points.push_back(msgs_p2);
+//         mKeyFrames.points.push_back(msgs_p3);
+//         mKeyFrames.points.push_back(msgs_p3);
+//         mKeyFrames.points.push_back(msgs_p4);
+//         mKeyFrames.points.push_back(msgs_p4);
+//         mKeyFrames.points.push_back(msgs_p1);
 
-        // Covisibility Graph
-        vector<ORB_SLAM2::KeyFrame*> vCovKFs = vpKFs[i]->GetCovisiblesByWeight(100);
-        if(!vCovKFs.empty())
-        {
-            for(vector<ORB_SLAM2::KeyFrame*>::iterator vit=vCovKFs.begin(), vend=vCovKFs.end(); vit!=vend; vit++)
-            {
-                if((*vit)->mnId<vpKFs[i]->mnId)
-                    continue;
-                cv::Mat Ow2 = (*vit)->GetCameraCenter();
-                geometry_msgs::Point msgs_o2;
-                msgs_o2.x=Ow2.at<float>(2);
-//                msgs_o2.y=Ow2.at<float>(1);
-//                msgs_o2.z=Ow2.at<float>(2);
-                msgs_o2.y=-Ow2.at<float>(0);
-                msgs_o2.z=Ow2.at<float>(1);
-                mCovisibilityGraph.points.push_back(msgs_o);
-                mCovisibilityGraph.points.push_back(msgs_o2);
-            }
-        }
+//         // Covisibility Graph
+//         vector<ORB_SLAM2::KeyFrame*> vCovKFs = vpKFs[i]->GetCovisiblesByWeight(100);
+//         if(!vCovKFs.empty())
+//         {
+//             for(vector<ORB_SLAM2::KeyFrame*>::iterator vit=vCovKFs.begin(), vend=vCovKFs.end(); vit!=vend; vit++)
+//             {
+//                 if((*vit)->mnId<vpKFs[i]->mnId)
+//                     continue;
+//                 cv::Mat Ow2 = (*vit)->GetCameraCenter();
+//                 geometry_msgs::Point msgs_o2;
+//                 msgs_o2.x=Ow2.at<float>(2);
+// //                msgs_o2.y=Ow2.at<float>(1);
+// //                msgs_o2.z=Ow2.at<float>(2);
+//                 msgs_o2.y=-Ow2.at<float>(0);
+//                 msgs_o2.z=Ow2.at<float>(1);
+//                 mCovisibilityGraph.points.push_back(msgs_o);
+//                 mCovisibilityGraph.points.push_back(msgs_o2);
+//             }
+//         }
 
-        // MST
-        ORB_SLAM2::KeyFrame* pParent = vpKFs[i]->GetParent();
-        if(pParent)
-        {
-            cv::Mat Owp = pParent->GetCameraCenter();
-            geometry_msgs::Point msgs_op;
-            msgs_op.x=Owp.at<float>(2);
-//            msgs_op.y=Owp.at<float>(1);
-//            msgs_op.z=Owp.at<float>(2);
-            msgs_op.y=-Owp.at<float>(0);
-            msgs_op.z=Owp.at<float>(1);
-            mMST.points.push_back(msgs_o);
-            mMST.points.push_back(msgs_op);
-        }
-        set<ORB_SLAM2::KeyFrame*> sLoopKFs = vpKFs[i]->GetLoopEdges();
-        for(set<ORB_SLAM2::KeyFrame*>::iterator sit=sLoopKFs.begin(), send=sLoopKFs.end(); sit!=send; sit++)
-        {
-            if((*sit)->mnId<vpKFs[i]->mnId)
-                continue;
-            cv::Mat Owl = (*sit)->GetCameraCenter();
-            geometry_msgs::Point msgs_ol;
-            msgs_ol.x=Owl.at<float>(2);
-//            msgs_ol.y=Owl.at<float>(1);
-//            msgs_ol.z=Owl.at<float>(2);
-            msgs_ol.y=-Owl.at<float>(0);
-            msgs_ol.z=Owl.at<float>(1);
-            mMST.points.push_back(msgs_o);
-            mMST.points.push_back(msgs_ol);
-        }
-    }
+//         // MST
+//         ORB_SLAM2::KeyFrame* pParent = vpKFs[i]->GetParent();
+//         if(pParent)
+//         {
+//             cv::Mat Owp = pParent->GetCameraCenter();
+//             geometry_msgs::Point msgs_op;
+//             msgs_op.x=Owp.at<float>(2);
+// //            msgs_op.y=Owp.at<float>(1);
+// //            msgs_op.z=Owp.at<float>(2);
+//             msgs_op.y=-Owp.at<float>(0);
+//             msgs_op.z=Owp.at<float>(1);
+//             mMST.points.push_back(msgs_o);
+//             mMST.points.push_back(msgs_op);
+//         }
+//         set<ORB_SLAM2::KeyFrame*> sLoopKFs = vpKFs[i]->GetLoopEdges();
+//         for(set<ORB_SLAM2::KeyFrame*>::iterator sit=sLoopKFs.begin(), send=sLoopKFs.end(); sit!=send; sit++)
+//         {
+//             if((*sit)->mnId<vpKFs[i]->mnId)
+//                 continue;
+//             cv::Mat Owl = (*sit)->GetCameraCenter();
+//             geometry_msgs::Point msgs_ol;
+//             msgs_ol.x=Owl.at<float>(2);
+// //            msgs_ol.y=Owl.at<float>(1);
+// //            msgs_ol.z=Owl.at<float>(2);
+//             msgs_ol.y=-Owl.at<float>(0);
+//             msgs_ol.z=Owl.at<float>(1);
+//             mMST.points.push_back(msgs_o);
+//             mMST.points.push_back(msgs_ol);
+//         }
+//     }
 
-    mKeyFrames.header.stamp = ros::Time::now();
-    mCovisibilityGraph.header.stamp = ros::Time::now();
-    mMST.header.stamp = ros::Time::now();
+//     mKeyFrames.header.stamp = ros::Time::now();
+//     mCovisibilityGraph.header.stamp = ros::Time::now();
+//     mMST.header.stamp = ros::Time::now();
 
 //    publisher.publish(mKeyFrames);
 //    publisher.publish(mCovisibilityGraph);
@@ -338,73 +337,73 @@ void MapPublisher::PublishKeyFrames(const vector<ORB_SLAM2::KeyFrame*> &vpKFs)
 
 void MapPublisher::PublishCurrentCamera(const cv::Mat &Tcw)
 {
-    mCurrentCamera.points.clear();
+//     mCurrentCamera.points.clear();
 
-    float d = fCameraSize;
+//     float d = fCameraSize;
 
-    //Camera is a pyramid. Define in camera coordinate system
+//     //Camera is a pyramid. Define in camera coordinate system
     cv::Mat o = (cv::Mat_<float>(4,1) << 0, 0, 0, 1);
-    cv::Mat p1 = (cv::Mat_<float>(4,1) << d, d*0.8, d*0.5, 1);
-    cv::Mat p2 = (cv::Mat_<float>(4,1) << d, -d*0.8, d*0.5, 1);
-    cv::Mat p3 = (cv::Mat_<float>(4,1) << -d, -d*0.8, d*0.5, 1);
-    cv::Mat p4 = (cv::Mat_<float>(4,1) << -d, d*0.8, d*0.5, 1);
+//     cv::Mat p1 = (cv::Mat_<float>(4,1) << d, d*0.8, d*0.5, 1);
+//     cv::Mat p2 = (cv::Mat_<float>(4,1) << d, -d*0.8, d*0.5, 1);
+//     cv::Mat p3 = (cv::Mat_<float>(4,1) << -d, -d*0.8, d*0.5, 1);
+//     cv::Mat p4 = (cv::Mat_<float>(4,1) << -d, d*0.8, d*0.5, 1);
 
     cv::Mat Twc = Tcw.inv();
     cv::Mat ow = Twc*o;
-    cv::Mat p1w = Twc*p1;
-    cv::Mat p2w = Twc*p2;
-    cv::Mat p3w = Twc*p3;
-    cv::Mat p4w = Twc*p4;
+//     cv::Mat p1w = Twc*p1;
+//     cv::Mat p2w = Twc*p2;
+//     cv::Mat p3w = Twc*p3;
+//     cv::Mat p4w = Twc*p4;
 
-    geometry_msgs::Point msgs_o,msgs_p1, msgs_p2, msgs_p3, msgs_p4;
-    msgs_o.x=ow.at<float>(2);
-//    msgs_o.y=ow.at<float>(1);
-//    msgs_o.z=ow.at<float>(2);
-    msgs_o.y=-ow.at<float>(0);
-    msgs_o.z=ow.at<float>(1);
+//     geometry_msgs::Point msgs_o,msgs_p1, msgs_p2, msgs_p3, msgs_p4;
+//     msgs_o.x=ow.at<float>(2);
+// //    msgs_o.y=ow.at<float>(1);
+// //    msgs_o.z=ow.at<float>(2);
+//     msgs_o.y=-ow.at<float>(0);
+//     msgs_o.z=ow.at<float>(1);
 
-    msgs_p1.x=p1w.at<float>(2);
-//    msgs_p1.y=p1w.at<float>(1);
-//    msgs_p1.z=p1w.at<float>(2);
-    msgs_p1.y=-p1w.at<float>(0);
-    msgs_p1.z=p1w.at<float>(1);
+//     msgs_p1.x=p1w.at<float>(2);
+// //    msgs_p1.y=p1w.at<float>(1);
+// //    msgs_p1.z=p1w.at<float>(2);
+//     msgs_p1.y=-p1w.at<float>(0);
+//     msgs_p1.z=p1w.at<float>(1);
 
-    msgs_p2.x=p2w.at<float>(2);
-//    msgs_p2.y=p2w.at<float>(1);
-//    msgs_p2.z=p2w.at<float>(2);
-    msgs_p2.y=-p2w.at<float>(0);
-    msgs_p2.z=p2w.at<float>(1);
+//     msgs_p2.x=p2w.at<float>(2);
+// //    msgs_p2.y=p2w.at<float>(1);
+// //    msgs_p2.z=p2w.at<float>(2);
+//     msgs_p2.y=-p2w.at<float>(0);
+//     msgs_p2.z=p2w.at<float>(1);
 
-    msgs_p3.x=p3w.at<float>(2);
-//    msgs_p3.y=p3w.at<float>(1);
-//    msgs_p3.z=p3w.at<float>(2);
-    msgs_p3.y=-p3w.at<float>(0);
-    msgs_p3.z=p3w.at<float>(1);
+//     msgs_p3.x=p3w.at<float>(2);
+// //    msgs_p3.y=p3w.at<float>(1);
+// //    msgs_p3.z=p3w.at<float>(2);
+//     msgs_p3.y=-p3w.at<float>(0);
+//     msgs_p3.z=p3w.at<float>(1);
 
-    msgs_p4.x=p4w.at<float>(2);
-//    msgs_p4.y=p4w.at<float>(1);
-//    msgs_p4.z=p4w.at<float>(2);
-    msgs_p4.y=-p4w.at<float>(0);
-    msgs_p4.z=p4w.at<float>(1);
+//     msgs_p4.x=p4w.at<float>(2);
+// //    msgs_p4.y=p4w.at<float>(1);
+// //    msgs_p4.z=p4w.at<float>(2);
+//     msgs_p4.y=-p4w.at<float>(0);
+//     msgs_p4.z=p4w.at<float>(1);
 
-    mCurrentCamera.points.push_back(msgs_o);
-    mCurrentCamera.points.push_back(msgs_p1);
-    mCurrentCamera.points.push_back(msgs_o);
-    mCurrentCamera.points.push_back(msgs_p2);
-    mCurrentCamera.points.push_back(msgs_o);
-    mCurrentCamera.points.push_back(msgs_p3);
-    mCurrentCamera.points.push_back(msgs_o);
-    mCurrentCamera.points.push_back(msgs_p4);
-    mCurrentCamera.points.push_back(msgs_p1);
-    mCurrentCamera.points.push_back(msgs_p2);
-    mCurrentCamera.points.push_back(msgs_p2);
-    mCurrentCamera.points.push_back(msgs_p3);
-    mCurrentCamera.points.push_back(msgs_p3);
-    mCurrentCamera.points.push_back(msgs_p4);
-    mCurrentCamera.points.push_back(msgs_p4);
-    mCurrentCamera.points.push_back(msgs_p1);
+//     mCurrentCamera.points.push_back(msgs_o);
+//     mCurrentCamera.points.push_back(msgs_p1);
+//     mCurrentCamera.points.push_back(msgs_o);
+//     mCurrentCamera.points.push_back(msgs_p2);
+//     mCurrentCamera.points.push_back(msgs_o);
+//     mCurrentCamera.points.push_back(msgs_p3);
+//     mCurrentCamera.points.push_back(msgs_o);
+//     mCurrentCamera.points.push_back(msgs_p4);
+//     mCurrentCamera.points.push_back(msgs_p1);
+//     mCurrentCamera.points.push_back(msgs_p2);
+//     mCurrentCamera.points.push_back(msgs_p2);
+//     mCurrentCamera.points.push_back(msgs_p3);
+//     mCurrentCamera.points.push_back(msgs_p3);
+//     mCurrentCamera.points.push_back(msgs_p4);
+//     mCurrentCamera.points.push_back(msgs_p4);
+//     mCurrentCamera.points.push_back(msgs_p1);
 
-    mCurrentCamera.header.stamp = ros::Time::now();
+//     mCurrentCamera.header.stamp = ros::Time::now();
 
 //    publisher.publish(mCurrentCamera);
 
@@ -472,7 +471,6 @@ void MapPublisher::PublishCurrentCamera(const cv::Mat &Tcw)
       camera_pose.pose.orientation = rgbd_camera_transform.rotation;
       camera_pose.header.stamp = ros::Time::now();
       camera_pose.header.frame_id = MAP_FRAME_ID;
-//      camera_pose.header.frame_id = "map";
 
       path.poses.push_back(camera_pose);
       path_pub.publish(path);

@@ -1,7 +1,8 @@
 <launch>
 
-    <node pkg="hi_slam" type="main" name="main" output="screen">
-    </node>
+
+
+    <node pkg="hi_slam" type="main" name="main" output="screen"></node>
 
     <node name="flat_world_imu_node" pkg="cartographer_turtlebot"
         type="cartographer_flat_world_imu_node" output="screen">

@@ -42,7 +42,7 @@ void Slam::Activate(){
 }
 
 
-void Slam::Activate(geometry_msgs::Transform& pose, string map_frame){
+void Slam::Activate(geometry_msgs::Transform& pose, string map_frame, std::string scene){
 
   options_ = LoadOptions();
   options_.map_frame = map_frame;

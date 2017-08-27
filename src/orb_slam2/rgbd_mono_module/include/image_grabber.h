@@ -1,5 +1,4 @@
 /**
-* This file is part of rgbd_module.
 *
 * Author: tzh
 * Date: 2017-03-28

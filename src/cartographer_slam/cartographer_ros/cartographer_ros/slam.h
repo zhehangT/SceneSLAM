@@ -34,7 +34,7 @@ public:
 
   void Activate();
 
-  void Activate(geometry_msgs::Transform& pose, string map_frame);
+  void Activate(geometry_msgs::Transform& pose, string map_frame, std::string scene);
 
   void Shutdown();
 
