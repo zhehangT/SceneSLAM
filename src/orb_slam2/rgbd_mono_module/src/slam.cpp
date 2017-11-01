@@ -24,7 +24,6 @@ Slam::Slam()
    depth_sub_(nh_, "/camera/depth_registered/image_raw", 1)/*,
    sync_(sync_pol(10), rgb_sub_,depth_sub_)*/{
   first_active_ = true;
-  sync_ = new message_filters::Synchronizer<sync_pol>(sync_pol(10), rgb_sub_, depth_sub_);
   ROS_INFO_STREAM("Construct rgbd_mono_module...");
 
 }
@@ -45,16 +44,28 @@ void Slam::Activate(geometry_msgs::Transform& pose, string map_frame, std::strin
   if(first_active_){
     std::string vocabulary = ros::package::getPath("rgbd_mono_module") + "/config/ORBvoc.txt";
     std::string settings = ros::package::getPath("rgbd_mono_module") + "/config/TUM1.yaml";
-    SLAM_ = new ORB_SLAM2::System(vocabulary, settings, ORB_SLAM2::System::RGBD, false);
-    mpMapPub_ = new MapPublisher(SLAM_->mpMap, pose, map_frame);
-    igb_ = new ImageGrabber(SLAM_, mpMapPub_);
 
 
     ROS_INFO_STREAM("Activate rgbd_mono_module with pose...");
     ROS_INFO("rgbd_mono_module first active scene %s...", scene.c_str());
 
+    if(scene == "Indoor"){
 
-    sync_->registerCallback(boost::bind(&ImageGrabber::GrabRGBD,igb_,_1,_2));
+      sync_ = new message_filters::Synchronizer<sync_pol>(sync_pol(10), rgb_sub_, depth_sub_);
+      SLAM_ = new ORB_SLAM2::System(vocabulary, settings, ORB_SLAM2::System::RGBD, false);
+      mpMapPub_ = new MapPublisher(SLAM_->mpMap, pose, map_frame);
+      igb_ = new ImageGrabber(SLAM_, mpMapPub_);
+      sync_->registerCallback(boost::bind(&ImageGrabber::GrabRGBD, igb_, _1, _2));
+    
+    }
+    else if(scene == "Outdoor"){
+
+      SLAM_ = new ORB_SLAM2::System(vocabulary, settings, ORB_SLAM2::System::MONOCULAR, false);
+      mpMapPub_ = new MapPublisher(SLAM_->mpMap, pose, map_frame);
+      igb_ = new ImageGrabber(SLAM_, mpMapPub_);
+      rgb_sub_only_ = nh_.subscribe("/camera/rgb/image_raw", 1, &ImageGrabber::GrabRGB, igb_);
+
+    }
 
     first_active_ = false;
 
@@ -62,22 +73,25 @@ void Slam::Activate(geometry_msgs::Transform& pose, string map_frame, std::strin
   else{
     if(scene == "Indoor"){
 
-      ROS_INFO("ORB-SLAM to Indoor");
+      sync_ = new message_filters::Synchronizer<sync_pol>(sync_pol(10), rgb_sub_, depth_sub_);
+      sync_->registerCallback(boost::bind(&ImageGrabber::GrabRGBD,igb_,_1,_2));
+      rgb_sub_only_.shutdown();
+      SLAM_->SetChangeState(true);
 
     }
 
     else if(scene == "Outdoor"){
 
       ROS_INFO("ORB-SLAM to Outdoor");
+      delete sync_;
+      SLAM_->ChangeToMono();
+      rgb_sub_only_ = nh_.subscribe("/camera/rgb/image_raw", 1, &ImageGrabber::GrabRGB, igb_);
+
     }
 
   }
 
-
-
 }
-
-
 
 void Slam::Shutdown() {
 
@@ -86,7 +100,6 @@ void Slam::Shutdown() {
   SLAM_->SaveKeyFrameTrajectoryTUM("KeyFrameTrajectory.txt");
 
 }
-
 
 void Slam::Shutdown(geometry_msgs::Transform& pose) {
 

@@ -1,13 +1,13 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 78
+    Help Height: 81
     Name: Displays
     Property Tree Widget:
       Expanded:
         - /TF1
         - /Path1
-      Splitter Ratio: 0.6006709933280945
-    Tree Height: 763
+      Splitter Ratio: 0.600671
+    Tree Height: 693
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -16,7 +16,7 @@ Panels:
       - /2D Nav Goal1
       - /Publish Point1
     Name: Tool Properties
-    Splitter Ratio: 0.5886790156364441
+    Splitter Ratio: 0.588679
   - Class: rviz/Views
     Expanded:
       - /Current View1
@@ -36,7 +36,7 @@ Visualization Manager:
       Color: 160; 160; 164
       Enabled: true
       Line Style:
-        Line Width: 0.029999999329447746
+        Line Width: 0.03
         Value: Lines
       Name: Grid
       Normal Cell Count: 0
@@ -79,6 +79,8 @@ Visualization Manager:
           Value: false
         gyro_link:
           Value: false
+        map:
+          Value: true
         odom:
           Value: false
         plate_bottom_link:
@@ -119,6 +121,8 @@ Visualization Manager:
           Value: false
         pole_top_3_link:
           Value: false
+        rgbd_mono_module_0:
+          Value: true
         wheel_left_link:
           Value: false
         wheel_right_link:
@@ -129,7 +133,73 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        {}
+        map:
+          rgbd_mono_module_0:
+            odom:
+              base_footprint:
+                base_link:
+                  camera_rgb_frame:
+                    camera_depth_frame:
+                      camera_depth_optical_frame:
+                        {}
+                    camera_link:
+                      {}
+                    camera_rgb_optical_frame:
+                      {}
+                  caster_back_link:
+                    {}
+                  caster_front_link:
+                    {}
+                  cliff_sensor_front_link:
+                    {}
+                  cliff_sensor_left_link:
+                    {}
+                  cliff_sensor_right_link:
+                    {}
+                  gyro_link:
+                    {}
+                  plate_bottom_link:
+                    {}
+                  plate_middle_link:
+                    {}
+                  plate_top_link:
+                    {}
+                  pole_bottom_0_link:
+                    {}
+                  pole_bottom_1_link:
+                    {}
+                  pole_bottom_2_link:
+                    {}
+                  pole_bottom_3_link:
+                    {}
+                  pole_bottom_4_link:
+                    {}
+                  pole_bottom_5_link:
+                    {}
+                  pole_kinect_0_link:
+                    {}
+                  pole_kinect_1_link:
+                    {}
+                  pole_middle_0_link:
+                    {}
+                  pole_middle_1_link:
+                    {}
+                  pole_middle_2_link:
+                    {}
+                  pole_middle_3_link:
+                    {}
+                  pole_top_0_link:
+                    {}
+                  pole_top_1_link:
+                    {}
+                  pole_top_2_link:
+                    {}
+                  pole_top_3_link:
+                    {}
+                  wheel_left_link:
+                    {}
+                  wheel_right_link:
+                    {}
       Update Interval: 0
       Value: true
     - Class: Submaps
@@ -164,7 +234,7 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.05000000074505806
+      Size (m): 0.05
       Style: Flat Squares
       Topic: /scan_matched_points2
       Unreliable: false
@@ -176,7 +246,7 @@ Visualization Manager:
       Marker Topic: /ORB_SLAM/Map
       Name: Marker
       Namespaces:
-        {}
+        MapPoints: true
       Queue Size: 100
       Value: true
     - Alpha: 1
@@ -184,21 +254,20 @@ Visualization Manager:
       Class: rviz/Path
       Color: 255; 85; 255
       Enabled: true
-      Head Diameter: 0.30000001192092896
-      Head Length: 0.20000000298023224
-      Length: 0.30000001192092896
+      Head Diameter: 0.3
+      Head Length: 0.2
+      Length: 0.3
       Line Style: Lines
-      Line Width: 0.029999999329447746
+      Line Width: 0.03
       Name: Path
       Offset:
         X: 0
         Y: 0
         Z: 0
-      Pose Color: 255; 85; 255
       Pose Style: None
-      Radius: 0.029999999329447746
-      Shaft Diameter: 0.10000000149011612
-      Shaft Length: 0.10000000149011612
+      Radius: 0.03
+      Shaft Diameter: 0.1
+      Shaft Length: 0.1
       Topic: ORB_SLAM/Trajectory
       Unreliable: false
       Value: true
@@ -207,21 +276,20 @@ Visualization Manager:
       Class: rviz/Path
       Color: 255; 85; 255
       Enabled: true
-      Head Diameter: 0.30000001192092896
-      Head Length: 0.20000000298023224
-      Length: 0.30000001192092896
+      Head Diameter: 0.3
+      Head Length: 0.2
+      Length: 0.3
       Line Style: Lines
-      Line Width: 0.029999999329447746
+      Line Width: 0.03
       Name: Path
       Offset:
         X: 0
         Y: 0
         Z: 0
-      Pose Color: 255; 85; 255
       Pose Style: None
-      Radius: 0.029999999329447746
-      Shaft Diameter: 0.10000000149011612
-      Shaft Length: 0.10000000149011612
+      Radius: 0.03
+      Shaft Diameter: 0.1
+      Shaft Length: 0.1
       Topic: Laser/Trajectory
       Unreliable: false
       Value: true
@@ -251,25 +319,25 @@ Visualization Manager:
       Angle: 0
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
-        Stereo Eye Separation: 0.05999999865889549
+        Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Name: Current View
-      Near Clip Distance: 0.009999999776482582
-      Scale: 189.7361602783203
+      Near Clip Distance: 0.01
+      Scale: 162.194
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: 2.425874948501587
-      Y: -0.4129703640937805
+      X: 2.42587
+      Y: -0.41297
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1054
+  Height: 978
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001c500000384fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005800fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003900000384000000bf00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f00000384fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730100000039000003840000009f00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007800000003efc0100000002fb0000000800540069006d00650100000000000007800000025700fffffffb0000000800540069006d00650100000000000004500000000000000000000004a20000038400000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001c500000347fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006700fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000002800000347000000e300fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f00000347fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000002800000347000000b400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007800000003efc0100000002fb0000000800540069006d00650100000000000007800000023e00fffffffb0000000800540069006d00650100000000000004500000000000000000000004a00000034700000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -280,4 +348,4 @@ Window Geometry:
     collapsed: false
   Width: 1920
   X: 0
-  Y: 0
+  Y: 31

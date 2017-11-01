@@ -772,5 +772,13 @@ bool LoopClosing::isFinished()
     return mbFinished;
 }
 
+void LoopClosing::setFixScale(bool isFix)
+{
+
+    mbFixScale = isFix;
+}
+
 
 } //namespace ORB_SLAM
+
+

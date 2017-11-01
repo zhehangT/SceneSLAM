@@ -659,6 +659,7 @@ void Frame::ComputeStereoFromRGBD(const cv::Mat &imDepth)
         {
             mvDepth[i] = d;
             mvuRight[i] = kpU.pt.x-mbf/d;
+
         }
     }
 }

@@ -51,6 +51,8 @@ private:
   typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> sync_pol;
   message_filters::Synchronizer<sync_pol>* sync_;
 
+  ros::Subscriber rgb_sub_only_;
+
 };
 }
 

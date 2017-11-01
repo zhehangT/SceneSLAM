@@ -122,6 +122,14 @@ public:
     std::vector<MapPoint*> GetTrackedMapPoints();
     std::vector<cv::KeyPoint> GetTrackedKeyPointsUn();
 
+    void SetSensor(eSensor sensor);
+    void SetChangeState(bool state);
+    bool GetChangeState();
+
+    void ChangeToMono();
+    void ChangeToRGBD();
+    void trackMonoToRGBD(const cv::Mat &im, const cv::Mat &depthmap, const double &timestamp);
+
     // Map structure that stores the pointers to all KeyFrames and MapPoints.
     Map* mpMap;
 
@@ -178,6 +186,10 @@ private:
     std::vector<MapPoint*> mTrackedMapPoints;
     std::vector<cv::KeyPoint> mTrackedKeyPointsUn;
     std::mutex mMutexState;
+
+    // true if change from mono to rbgd
+    bool mChangeState;
+
 };
 
 }// namespace ORB_SLAM

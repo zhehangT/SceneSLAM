@@ -25,13 +25,14 @@
 #include <thread>
 #include <pangolin/pangolin.h>
 #include <iomanip>
+#include <cmath>
 
 namespace ORB_SLAM2
 {
 
 System::System(const string &strVocFile, const string &strSettingsFile, const eSensor sensor,
                const bool bUseViewer):mSensor(sensor), mpViewer(static_cast<Viewer*>(NULL)), mbReset(false),mbActivateLocalizationMode(false),
-        mbDeactivateLocalizationMode(false)
+        mbDeactivateLocalizationMode(false), mChangeState(false)
 {
     // Output welcome message
     cout << endl <<
@@ -113,6 +114,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     mpLoopCloser->SetLocalMapper(mpLocalMapper);
 }
 
+
 cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const double &timestamp)
 {
     if(mSensor!=STEREO)
@@ -164,6 +166,7 @@ cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const
     return Tcw;
 }
 
+
 cv::Mat System::TrackRGBD(const cv::Mat &im, const cv::Mat &depthmap, const double &timestamp)
 {
     if(mSensor!=RGBD)
@@ -212,11 +215,17 @@ cv::Mat System::TrackRGBD(const cv::Mat &im, const cv::Mat &depthmap, const doub
     mTrackingState = mpTracker->mState;
     mTrackedMapPoints = mpTracker->mCurrentFrame.mvpMapPoints;
     mTrackedKeyPointsUn = mpTracker->mCurrentFrame.mvKeysUn;
+
+    // cout << "TrackRGBD_mappoint:" << mTrackedMapPoints.size() << endl;
+    // cout << "TrackRGBD_keypoint:" << mTrackedKeyPointsUn.size() << endl;
+
+
     return Tcw;
 }
 
 cv::Mat System::TrackMonocular(const cv::Mat &im, const double &timestamp)
 {
+    
     if(mSensor!=MONOCULAR)
     {
         cerr << "ERROR: you called TrackMonocular but input sensor was not set to Monocular." << endl;
@@ -488,5 +497,109 @@ vector<cv::KeyPoint> System::GetTrackedKeyPointsUn()
     unique_lock<mutex> lock(mMutexState);
     return mTrackedKeyPointsUn;
 }
+
+
+void System::SetSensor(eSensor sensor)
+{
+    mSensor = sensor;
+    
+}
+
+void System::SetChangeState(bool state)
+{
+    mChangeState = state;
+}
+
+bool System::GetChangeState()
+{
+    return mChangeState;
+}
+
+void System::trackMonoToRGBD(const cv::Mat &im, const cv::Mat &depthmap, const double &timestamp)
+{
+    
+    TrackMonocular(im, timestamp);
+    cv::Mat imDepth = depthmap;
+
+    imDepth.convertTo(imDepth,CV_32F,0.001);
+
+    float scale = 0;
+    int count = 1;
+
+    //mTrackedMapPoints
+    //mTrackedKeyPointsUn
+    for(size_t i = 0; i < mTrackedMapPoints.size(); i++){
+
+        float v = mTrackedKeyPointsUn[i].pt.y;
+        float u = mTrackedKeyPointsUn[i].pt.x;
+        float d = imDepth.at<float>(v,u);
+
+        MapPoint* mp = mTrackedMapPoints[i];
+
+        if(mp != NULL){
+            
+            cv::Mat m = mp->GetWorldPos();
+            float temp = m.at<float>(2) / d;
+            if(!std::isinf(temp) && std::isfinite(temp)){
+                
+                scale = scale + (temp - scale) / count;
+                count++;
+            }
+
+
+        }
+    }
+
+    cout << scale << endl;
+
+    vector<ORB_SLAM2::MapPoint*> vpMPs = mpMap->GetAllMapPoints();
+
+
+    for(size_t i=0, iend=vpMPs.size(); i<iend;i++)
+    {
+        cv::Mat pos = vpMPs[i]->GetWorldPos();
+        pos = pos / scale * 2;
+        vpMPs[i]->SetWorldPos(pos);
+    }
+
+    std::vector<KeyFrame*> vpKFs = mpMap->GetAllKeyFrames();
+    for(size_t i=0, iend=vpKFs.size(); i<iend;i++)
+    {
+        cv::Mat Tc2w = vpKFs[i]->GetPose();
+        Tc2w.col(3).rowRange(0,3) = Tc2w.col(3).rowRange(0,3) / scale * 2;
+        vpKFs[i]->SetPose(Tc2w);
+    }
+
+
+    ChangeToRGBD();
+    mChangeState = false;
+
+}
+
+void System::ChangeToRGBD(){
+
+
+    mSensor = System::RGBD;
+    mpTracker->SetSensor(mSensor);
+    mpLocalMapper->SetMonocular(false);
+    mpLoopCloser->setFixScale(false);
+
+
+}
+
+
+
+void System::ChangeToMono(){
+
+
+    mSensor = System::MONOCULAR;
+    mpTracker->SetSensor(mSensor);
+    mpLocalMapper->SetMonocular(true);
+    mpLoopCloser->setFixScale(true);
+
+
+}
+
+
 
 } //namespace ORB_SLAM

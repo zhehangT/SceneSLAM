@@ -72,6 +72,8 @@ public:
         return mlNewKeyFrames.size();
     }
 
+    void SetMonocular(bool mbMono);
+
 protected:
 
     bool CheckNewKeyFrames();

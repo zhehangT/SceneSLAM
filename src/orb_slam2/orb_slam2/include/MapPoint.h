@@ -44,6 +44,7 @@ public:
 
     void SetWorldPos(const cv::Mat &Pos);
     cv::Mat GetWorldPos();
+    bool IsWorldPosNull();
 
     cv::Mat GetNormal();
     KeyFrame* GetReferenceKeyFrame();
@@ -112,10 +113,13 @@ public:
 
     static std::mutex mGlobalMutex;
 
+    cv::Mat mWorldPos;
+
+
 protected:    
 
      // Position in absolute coordinates
-     cv::Mat mWorldPos;
+    //  cv::Mat mWorldPos;
 
      // Keyframes observing the point and associated index in keyframe
      std::map<KeyFrame*,size_t> mObservations;

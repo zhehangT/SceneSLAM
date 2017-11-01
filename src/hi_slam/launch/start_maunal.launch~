@@ -1,7 +1,8 @@
 <launch>
 
+    <param name="/use_sim_time" value="true" />
 
-    <node pkg="hi_slam" type="main" name="main" output="screen"></node>
+    <node pkg="hi_slam" type="test_manual" name="test_manual" output="screen"> </node>
 
     <node name="flat_world_imu_node" pkg="cartographer_turtlebot"
         type="cartographer_flat_world_imu_node" output="screen">
@@ -14,6 +15,9 @@
         )/data/demo_turtlebot.rviz" />
 
     <node name="rqt_image_view" pkg="rqt_image_view" type="rqt_image_view"/>
+
+    <node name="rqt_reconfigure" pkg="rqt_reconfigure" type="rqt_reconfigure"/>
+
 
 
 </launch>

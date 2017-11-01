@@ -757,4 +757,10 @@ bool LocalMapping::isFinished()
     return mbFinished;
 }
 
+void LocalMapping::SetMonocular(bool mbMono){
+
+    mbMonocular = mbMono;
+}
+
+
 } //namespace ORB_SLAM

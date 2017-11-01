@@ -80,6 +80,8 @@ public:
 
     bool isFinished();
 
+    void setFixScale(bool isFix);
+
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 protected:

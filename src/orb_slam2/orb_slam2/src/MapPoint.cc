@@ -416,6 +416,9 @@ int MapPoint::PredictScale(const float &currentDist, Frame* pF)
     return nScale;
 }
 
+bool MapPoint::IsWorldPosNull(){
 
+    return mWorldPos.empty();
+}
 
 } //namespace ORB_SLAM

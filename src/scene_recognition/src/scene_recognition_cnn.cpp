@@ -33,7 +33,7 @@ SceneRecognitionCNN::SceneRecognitionCNN(){
   for (size_t i = 0; i < 3; ++i) {
     last_result_[i] = 1;
   }
-  time_ = ros::Time::now().toSec();
+  time_ = ros::WallTime::now().toSec();
 
   ROS_INFO("Initialising SceneRecognition...");
 }
@@ -60,9 +60,12 @@ void SceneRecognitionCNN::Shutdown(){
 
 void SceneRecognitionCNN::GrabImage(const sensor_msgs::ImageConstPtr& msg){
 
+
   cv_bridge::CvImageConstPtr cv_ptrRGB;
 
-  if(ros::Time::now().toSec() - time_ > 1){
+  // cout<<ros::WallTime::now().toSec()<<endl;
+
+  if(ros::WallTime::now().toSec() - time_ > 1){
     try{
 
       // double t = (double)getTickCount();
