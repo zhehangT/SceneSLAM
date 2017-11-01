@@ -1,4 +1,4 @@
-# HiSLAM
+# SceneSLAM
 Author: Zhehang Tong
 
 Related Publications:
