@@ -2,11 +2,14 @@
 Author: Zhehang Tong
 
 Related Publications:
+
 Zhehang Tong, Dianxi Shi and Shaowu Yang. **SceneSLAM: A SLAM Framework Combined with Scene Detection** IEEE International Conference on Robotics and Biomimetics (ROBIO 2017) [PDF](https://www.researchgate.net/publication/319619325_SceneSLAM_A_SLAM_Framework_Combined_with_Scene_Detection)
+
 
 **1 November 2017**: Beta Version
 
 A new scene detection module based on Alexnet to detect *Indoor*, *Outdoor* and *Bright*.
+
 RGBD Interface is called in *Indoor* and Monocular Interface is called in *Outdoor*.
 
 
